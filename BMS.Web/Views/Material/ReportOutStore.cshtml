@@ -1,0 +1,60 @@
+﻿@using BMS.Web
+@using BMS.Web.BLL
+@using BMS.Web.Models
+@using OUDAL
+@model List<ViewMaterialOutReport>
+@{
+    ViewBag.Title = "物资出库汇总";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    
+}); 
+
+</script>
+@using (Html.BeginForm() ){
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" > 
+部门: @MyControls.DepartmentDropdown("departments",root: Utilities.GetCurMallId()) 
+@Html.SearchDate("", "出库期间")
+
+<input type="submit"  value="查询" />
+</div>
+}
+@ViewBag.Error
+@if (Model != null)
+{
+    
+<table class="table table-bordered">
+        <thead>
+        <tr>
+        <td width="200">领用部门</td><td width="160">类别</td><td width="160">名称</td><td width="160">规格</td><td width="100">数量</td><td width="100">金额</td>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        @foreach (var i in Model)
+        {            
+            <tr>
+            <td>@i.Department</td>
+            <td>@i.CatalogName</td>
+            <td>@i.Name</td>
+            <td>@i.Spec</td>
+            <td>@i.OutNum.ToString("N2")</td>
+            <td>@i.TotalPrice.ToString("N2")</td>
+            </tr>
+            
+        }
+        </tbody>
+        <tfoot>
+       
+        </tfoot>
+        </table>
+    <p></p>
+    }
+}
+

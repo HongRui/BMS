@@ -1,0 +1,122 @@
+﻿@using BMS.Web
+@using BMS.Web.BLL
+@using OUDAL
+@model int
+@{
+    ViewBag.Title = "设备清单";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("AssetListQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");        
+     }
+}); 
+var colModelGrid= [{ name: 'id', index: 'id', width: 1, align: 'left',hidden:true }
+,{ name: 'Catalog',label:"类别", index: 'a.CatalogId', align: 'left' ,width:100 }
+,{ name: 'Name',label:"名称", index: 'a.Name', align: 'left' ,width:100}
+,{ name: 'Spec',label:"品牌/型号/规格", index: 'a.spec', align: 'left' ,width:100}
+,{ name: 'Supplier',label:"供应商", index: 'a.supplier', align: 'left' ,width:100}
+,{ name: 'Sn',label:"序列号", index: 'a.sn', align: 'left' ,width:100}
+,{ name: 'AssetNo',label:"固资号", index: 'a.assetno', align: 'left' ,width:100}
+,{ name: 'Price',label:"价格", index: 'a.price', sortable:false,format:'number',align: 'right' ,width:70}
+,{ name: 'BuyDate',label:"入库日期", index:"a.buyDate",formatter:"date", align: 'left' ,width:70}
+,{ name: 'StateName',label:"状态", index: 'a.state', align: 'left',width:50 }
+,{ name: 'Department',label:"使用部门", index: 'd.name', align: 'left' ,width:70}
+,{ name: 'UserName',label:"领用人", index: 'u.name', align: 'left',width:50 }
+,{ name: 'Remark',label:"备注", sortable:false, align: 'left',width:200 }];
+function rowclick(id)
+{
+    OpenFullWindow("./AssetView/"+id,"_blank");
+}
+function AddNew()
+{
+    OpenFullWindow("./AssetEdit/0");
+}
+function SearchClick(toexcel)
+{
+   
+        $('#listGrid').appendPostData({ Name: $("#name").val()});
+        $('#listGrid').appendPostData({ assetno: $("#assetno").val()}); 
+        $('#listGrid').appendPostData({ Catalog: $("#catalog").val()}); 
+        $('#listGrid').appendPostData({ supplier: $("#supplier").val()});  
+        $('#listGrid').appendPostData({ sn: $("#sn").val()});
+        $('#listGrid').appendPostData({ buydatebegin:$("#DateFrom").val()});
+        $('#listGrid').appendPostData({ buydateend: $("#DateTo").val()}); 
+        $('#listGrid').appendPostData({ remark: $("#remark").val()});
+        $('#listGrid').appendPostData({ user: $("#user").val()});
+        $('#listGrid').appendPostData({ area: $("#area").val()});
+        
+         var state=new Array();
+    $("input[name='state']:checked").each(function(){state.push($(this).val());});
+        $('#listGrid').appendPostData({ state:state}); 
+
+        $('#listGrid').appendPostData({ isbad: $("#isbad").attr("checked")});
+        
+        $('#listGrid').appendPostData({ isnouser: $("#isnouser").attr("checked")});
+        var assettype=new Array();
+    $("input[name='assettype']:checked").each(function(){assettype.push($(this).val());});
+        $('#listGrid').appendPostData({ assettype:assettype}); 
+        
+    if(toexcel){
+       ExportExcel($('#listGrid'));
+    }else{
+        $('#listGrid').trigger('reloadGrid');
+    }
+}        
+function ShowHidSearchDiv()
+    {
+        $("#SearchDiv").toggle();
+        if($("#SearchDiv").css('display')=='none')
+        {
+            $("#btnShowHide1").val("打开搜索条件");
+            $("#btnShowHide2").val("打开搜索条件");            
+        }else{
+            $("#btnShowHide1").val("关闭搜索条件");
+            $("#btnShowHide2").val("关闭搜索条件");
+        }        
+    }
+
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+搜索功能暂未完成
+<label class="len80" >名称/规格/品牌</label><input id="name" type="text" />
+@Html.ShortInput("assetno", "资产号")
+<input type="button" onclick="SearchClick();" value="查询" /><input type="button" value="导出" onclick="SearchClick(true);" />
+<input type="button" onclick="AddNew();" value="新增" />
+<input id="btnShowHide1" type="button" value="打开搜索条件" onclick="ShowHidSearchDiv()" /> 
+    <div id="SearchDiv" style="display:none">
+    <label class="len80" >类 别：</label>@MyControls.CatalogSelect("", null, "")  <br />  
+    @Html.ShortInput("supplier", "供应商")<br />
+    @Html.ShortInput("sn", "序列号")<br />    
+@Html.SearchDate("", "购买日期") <br />
+     @Html.ShortInput("remark", "备 注")<br />
+    @* <label class="len80" >使用部门</label>@MyControls.DepartmentDropdown("departments") <br /> *@
+     @Html.ShortInput("user", "使用人")<br />
+      @Html.ShortInput("area", "使用场所")<br />
+    <br />
+    <label class="len80" >状 态：</label><input type="checkbox" id="state0" name="state" value="0" checked="checked" />在用
+        <input type="checkbox" id="state1" name="state" value="1" />报废
+        <input type="checkbox" id="state2" name="state" value="2" />售出
+        <input type="checkbox" id="isbad" value="1" />故障&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="checkbox" id="isnouser" value="1" />未领用 &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="checkbox" id="assettype"  value="0" />自有资产
+        <input type="checkbox" id="assettype"  value="1" />托管资产   
+    <br /><input type="button" value="搜索" onclick="SearchClick()" />
+    
+    <input id="btnShowHide2" type="button" value="打开搜索条件" onclick="ShowHidSearchDiv()" />  
+    </div>
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+
+}
+

@@ -1,0 +1,62 @@
+﻿@using BMS.Web
+@using BMS.Web.BLL
+@using OUDAL
+@{
+    ViewBag.Title = "物资出库清单列表";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("MaterialOutListQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");        
+     }
+}); 
+var colModelGrid= [{ name: 'Id', index: 'Id', width: 1, align: 'left',hidden:true }
+,{ name: 'Code',label:"单号", index:"i.code", align: 'left' ,width:50}
+,{ name: 'Name',label:"物料名称", index:"m.name", align: 'left' ,width:200}
+
+,{ name: 'Sepc',label:"品牌/规格", index:"m.spec", align: 'left' ,width:100}
+,{ name: 'Num',label:"数量", index:"item.num",format:'number',align: 'right',width:50}
+
+,{ name: 'Department',label:"领用部门", index: 'd.name', align: 'left' ,width:200}
+,{ name: 'UserName',label:"领用人", index: 'U.Name', align: 'left',width:100 }
+,{ name: 'OutDate',label:"领用日期", index:"i.OutDate",formatter:"date", align: 'left' ,width:100}
+,{ name: 'Remark',label:"备注", sortable:false, align: 'left' ,width:200}];
+function rowclick(id)
+{
+    OpenFullWindow("./MaterialOutView/"+id,"_blank");
+}
+function AddNew()
+{
+    OpenFullWindow("./MaterialOutEdit/0");
+}
+function SearchClick()
+{ 
+$('#listGrid').appendPostData({ Department: $("#departments").val()});   
+    $('#listGrid').appendPostData({ Name: $("#Name").val()}); 
+    $('#listGrid').appendPostData({ MaterialName: $("#MaterialName").val()}); 
+    $('#listGrid').appendPostData({ DateFrom: $("#DateFrom").val()}); 
+    $('#listGrid').appendPostData({ DateTo: $("#DateTo").val()}); 
+    $('#listGrid').trigger('reloadGrid');
+}        
+</script>
+@Model
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+<label class="len60" >部门</label>@MyControls.DepartmentDropdown("departments") 
+@Html.ShortInput("Name", "领用人")
+@Html.ShortInput("MaterialName", "物料名称")
+@Html.SearchDate("", "入库日期")
+<input type="button" onclick="SearchClick();" value="查询" />
+<input type="button" onclick="AddNew();" value="新增" />
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+

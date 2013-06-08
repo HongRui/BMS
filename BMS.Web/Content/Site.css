@@ -1,0 +1,74 @@
+﻿body
+{
+    padding-left:0.1em;
+    padding-right:0.1em;
+}
+.tdRight {
+	background-color: #FFEBCD;
+	text-align: right !important;	
+}
+.right {
+    text-align: right !important;	
+}
+.menuContent
+{
+    background-color:#FFFFFF;
+}
+div.leftDiv
+{
+    float:left;
+    min-width:200px;
+    min-height:300px;
+}
+div.searchdiv
+{
+    padding:3px 3px 3px 3px;
+}
+div.searchdiv input[type="text"]
+{
+    min-width:100px;
+}
+div.searchdiv select
+{
+    width:150px;
+}
+div.searchdiv input[type="button"]
+{
+    min-width:80px;
+}
+.len80
+{
+    min-width:80px;
+    padding-left:10px;
+    padding-right:4px;
+    display:inline-block;
+}
+.len60
+{
+    min-width:50px;
+    padding-left:4px;
+    padding-right:4px;
+    display:inline-block;
+}
+.text60
+{
+    width:80px;    
+}
+.display-label,
+.editor-label
+{
+    
+    margin: 1em 0 0 0;
+    /* padding:1em;
+    text-align:right;
+    min-width:8em;
+    clear:left;
+    float:left;
+    */
+}
+.editor-field
+{
+    margin:0.2em 0 0 0;
+    /* padding:0.5em; */
+}
+.placeheld {color: #b0b0b0;}

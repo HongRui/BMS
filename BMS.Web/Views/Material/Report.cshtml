@@ -1,0 +1,66 @@
+﻿@using BMS.Web
+@using BMS.Web.BLL
+@using BMS.Web.Models
+@using OUDAL
+@model List<ViewMaterialReport>
+@{
+    ViewBag.Title = "物资盘点";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    
+}); 
+
+</script>
+@using (Html.BeginForm() ){
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" > 
+
+@Html.SearchDate("", "盘点期间")
+
+<input type="submit"  value="查询" />
+</div>
+    }
+@ViewBag.Error
+@if(Model!=null){
+<table class="table table-bordered">
+        <thead>
+        <tr>
+        <td width="160">保管部门</td><td width="160">类型</td><td width="140">名称</td><td width="140">规格</td><td>期初数量</td><td>期初金额</td><td>期间入库数量</td><td>入库金额</td><td>期间出库数量</td><td>出库金额</td><td>期末库存</td><td>期末均价</td><td>期末金额</td>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        @foreach(var i in Model)
+        {
+            <tr>
+            <td>@i.Department</td>
+            <td>@i.CatalogName</td>
+            <td>@i.Name</td>
+            <td>@i.Spec</td>
+            <td class="textright">@i.preNum</td>
+            <td class="textright">@i.prePrice.ToString("N2")</td>
+            <td class="textright">@i.InNum.ToString("N2")</td>
+            <td class="textright">@i.InPrice.ToString("N2")</td>
+            <td class="textright">@i.OutNum.ToString("N2")</td>
+            <td class="textright">@i.OutPrice.ToString("N2")</td>
+            <td class="textright">@i.LastNum.ToString("N2")</td>
+            <td class="textright">@i.UnitPrice.ToString("N2")</td>
+            <td class="textright">@i.LastPrice.ToString("N2")</td>
+            </tr>
+            }
+        </tbody>
+        <tfoot>
+       
+        </tfoot>
+        </table>
+    <p>期初金额=(期初入库-期初出库)*（期初入库金额/期初入库数量）<br/>
+    期末单价=（期初金额+期间入库金额）/（期初数量+期间入库数量)<br />
+    期末金额=期末单价*期末数量</p>
+    }
+}
+

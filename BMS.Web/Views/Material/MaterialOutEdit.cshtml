@@ -1,0 +1,155 @@
+﻿@model OUDAL.MaterialOut
+@using OUDAL
+@using BMS.Web
+@using BMS.Web.BLL
+@{
+   
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+<div style="width:500px;margin:0px auto">
+@using (Html.BeginForm() ){
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>物料出库单</legend>
+
+        @Html.HiddenFor(model => model.Id)
+        @Html.Hidden("ItemsString")
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Code)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Code)
+            @Html.ValidationMessageFor(model => model.Code)
+        </div>    
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DepartmentId)
+        </div>
+        <div class="editor-field">
+            @Html.MyDropdown("departmentId", DepartmentBLL.GetDepartmentList(Utilities.GetCurMallId()), Model.DepartmentId.ToString())
+            @Html.ValidationMessageFor(model => model.DepartmentId)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.PersonId)
+        </div>
+        <div class="editor-field">
+            @MyControls.SelectUser(Model.PersonId, "PersonId", "departmentId",Utilities.GetCurMallId());
+            @Html.ValidationMessageFor(model => model.PersonId)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.OutDate)
+        </div>
+        <div class="editor-field">
+            @Html.MyDateFor(model => model.OutDate, false)                     
+        </div>        
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Remark)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.Remark)
+            @Html.ValidationMessageFor(model => model.Remark)
+        </div>     
+        
+
+    </fieldset>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+        <td width="50"></td><td width="160">物料</td><td width="80">数量</td>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        </tbody>
+        <tfoot>
+        <tr><td colspan="5"><input class="btn" type="button" value="添加" onclick="addItem()" /></td></tr>
+        </tfoot>
+        </table>
+
+    <p><input class="btn" type="submit" value="保存" onclick="return Submit();" /> <input class="btn" type="button" value="取消" onclick="window.close()" /></p>
+}
+</div>        
+<script id="tmplView" type="text/x-jquery-tmpl">
+<tr>
+    <td><input class="btn" type="button" value="×" onclick="delItem(${Index})" /></td>
+    <td>
+    <span style="float:left" id="MaterialName${Index}"></span><input type="hidden" id="MaterialId${Index}" value="${Item.MaterialId}"/>
+    <div style="float:right"><input type="text" style="width:5em" onchange="GetMaterial(${Index},this.value);" />
+    [<a href="#" onclick="SelectMaterial(${Index})">选择</a>]</div>
+    </td>
+    
+    <td>
+    <input type="text" id="Num${Index}" value="${Item.Num}" style="width:40px" onkeyup="this.value=this.value.replace(/[^0-9.]/g,'');change(${Index})" />
+    <span>${Msg}</span>
+    </td> 
+</tr>
+</script>
+<script type="text/javascript">
+    var items = @Html.Raw(ViewBag.ItemsString);
+    $(document).ready(function () {
+        $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+        RendItem();
+    });
+    function RendItem()
+    {
+        
+        for(var i=0;i<items.length;i++){
+            items[i].Index=i;            
+        }
+        $("#tbody").empty();
+        $("#tmplView").tmpl(items).appendTo("#tbody");
+        for(var i=0;i<items.length;i++){
+            GetMaterialName("MaterialName"+i.toString(),items[i].Item.MaterialId);
+        }
+    }
+    function addItem()
+    {
+        items.push({Item:{"Id":0,"MaterialId":0,"OutId":@Model.Id,"Num":0},Msg:""});
+        RendItem();
+    }
+    function delItem(index)
+    {
+        items.splice(index,1);
+        RendItem();        
+    }
+    function GetMaterialName(spanName, id)
+    {
+    $.post("../GetMaterialName", { id: id }, function (data, textStatus) {
+                this;
+                $("#"+spanName).html(data);
+            });
+    }
+    function SelectMaterial(index)
+    {
+        OpenLargeWindow("../MaterialSelectList?index="+index,"selectmaterial");
+    }
+    function changeMaterial(index,materialId,materialName)
+    {
+        $("#MaterialId"+index.toString()).val(materialId);
+        $("#MaterialName"+index.toString()).html(materialName);
+        items[index].Item.MaterialId=materialId;
+        
+
+    }
+    function GetMaterial(index,name)
+    {
+         $.post("../GetMaterialByName", { name: name }, function (data, textStatus) {
+                this;
+                if(data.Id)
+                {
+                
+                    changeMaterial(index,data.Id,data.Name);
+                }
+            });
+    }
+    function change(index)
+    {        
+        items[index].Item.Num= $("#Num"+index.toString()).val()*1;
+        
+    }
+    function Submit()
+    {
+    $("#ItemsString").val(JSON.stringify(items));
+    return true;
+    }
+</script>

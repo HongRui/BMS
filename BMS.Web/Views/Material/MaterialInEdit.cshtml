@@ -1,0 +1,181 @@
+﻿@model OUDAL.MaterialIn
+@using OUDAL
+@using BMS.Web
+@using BMS.Web.BLL
+@{
+   
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+<div style="margin:0px auto">
+@using (Html.BeginForm() ){
+    @Html.ValidationSummary(true)
+    <fieldset style="float:left;width:40%">
+        <legend>物料入库单</legend>
+
+        @Html.HiddenFor(model => model.Id)
+        @Html.Hidden("ItemsString")
+        <div class="editor-label" style="margin-top:0em">
+            @Html.LabelFor(model => model.Code)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Code)
+            @Html.ValidationMessageFor(model => model.Code)
+        </div>    
+        @*<div class="editor-label">
+            @Html.LabelFor(model => model.DepartmentId)
+        </div>
+        <div class="editor-field">
+            @Html.MyDropdown("departmentId",DepartmentBLL.GetDepartmentList(Utilities.GetCurMallId()) ,Model.DepartmentId.ToString())
+            @Html.ValidationMessageFor(model => model.DepartmentId)
+        </div>*@
+        <div class="editor-label">
+            @Html.LabelFor(model => model.InDate)
+        </div>
+        <div class="editor-field">
+            @Html.MyDateFor(model => model.InDate, false)
+            @Html.ValidationMessageFor(model => model.InDate)
+            
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Supplier)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Supplier)
+            @Html.ValidationMessageFor(model => model.Supplier)
+        </div>    
+         <div class="editor-label">
+            @Html.LabelFor(model => model.InType)
+        </div>
+        <div class="editor-field">
+            @Html.MyEnumFor(model => model.InType,typeof(MaterialInType),false)
+            @Html.ValidationMessageFor(model => model.InType)
+        </div>  
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Remark)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.Remark)
+            @Html.ValidationMessageFor(model => model.Remark)
+        </div>     
+        
+
+    </fieldset>
+    <fieldset style="float:right;width:60%">
+        <legend>入库明细</legend>
+        
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+        <td width="35"></td><td >物料</td><td width="60">单价</td><td width="60">数量</td><td width="60">总价</td>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        </tbody>
+        <tfoot>
+        <tr><td colspan="5"><input class="btn" type="button" value="添加" onclick="addItem()" /> 注：物料输入框中可输入物料名称或备注来选择物料</td></tr>
+        </tfoot>
+        </table>
+        <div>
+        @*<p>说明：</p>
+        <p>入库部门指该入库单物资的保管部门，比如运营、工程物管等</p> *@
+        </div>
+    </fieldset>
+    <div style="clear:both; text-align:center">
+    <p><input class="btn" type="submit" value="保存" onclick="return Submit();" /> <input class="btn" type="button" value="取消" onclick="window.close()" /></p>
+    </div>
+}
+</div>        
+<script id="tmplView" type="text/x-jquery-tmpl">
+<tr>
+    <td><input class="btn" type="button" value="×" onclick="delItem(${Index})" /></td>
+    <td>
+    <input type="hidden" id="Index${Index}" value="${Id}"/>
+    <span style="float:left" id="MaterialName${Index}"></span><input type="hidden" id="MaterialId${Index}" value="${MaterialId}"/>
+    <div style="float:right"><input type="text" style="width:5em" onchange="GetMaterial(${Index},this.value);" />
+    [<a href="#" onclick="SelectMaterial(${Index})">选择</a>]</div>
+    </td>
+    <td>
+    <input type="text" id="UnitPrice${Index}" value="${UnitPrice}" style="width:40px" onkeyup="this.value=this.value.replace(/[^0-9.]/g,'');change(${Index})"/>
+    </td>
+    <td>
+    <input type="text" id="Num${Index}" value="${Num}" style="width:40px" onkeyup="this.value=this.value.replace(/[^0-9.]/g,'');change(${Index})" />
+    </td> 
+    
+    <td><span id="Total${Index}">${Num*UnitPrice}</span>
+    </td>
+</tr>
+</script>
+<script type="text/javascript">
+    var items = @Html.Raw(ViewBag.ItemsString);
+    $(document).ready(function () {
+        $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+        RendItem();
+    });
+    function RendItem()
+    {
+        
+        for(var i=0;i<items.length;i++){
+            items[i].Index=i;      
+                 
+        }
+        $("#tbody").empty();
+        $("#tmplView").tmpl(items).appendTo("#tbody");
+        for(var i=0;i<items.length;i++){
+            GetMaterialName("MaterialName"+i.toString(),items[i].MaterialId);
+        }
+    }
+    function addItem()
+    {
+        items.push({"Id":0,"MaterialId":0,"InId":@Model.Id,"UnitPrice":0,"Num":0});
+        RendItem();
+    }
+    function delItem(index)
+    {
+        items.splice(index,1);
+        RendItem();        
+    }
+    function GetMaterialName(spanName, id)
+    {
+    $.post("../GetMaterialName", { id: id }, function (data, textStatus) {
+                this;
+                $("#"+spanName).html(data);
+            });
+    }
+    function SelectMaterial(index)
+    {
+        OpenLargeWindow("../MaterialSelectList?index="+index,"selectmaterial");
+    }
+    function changeMaterial(index,materialId,materialName)
+    {
+        $("#MaterialId"+index.toString()).val(materialId);
+        $("#MaterialName"+index.toString()).html(materialName);
+        items[index].MaterialId=materialId;
+        
+
+    }
+    function change(index)
+    {
+     
+        items[index].UnitPrice=$("#UnitPrice"+index.toString()).val()*1;
+        items[index].Num= $("#Num"+index.toString()).val()*1;
+        $("#Total"+index.toString()).html( ($("#UnitPrice"+index.toString()).val() * $("#Num"+index.toString()).val()).toFixed(2));
+    }
+    function Submit()
+    {
+    $("#ItemsString").val(JSON.stringify(items));
+    return true;
+    }
+    function GetMaterial(index,name)
+    {
+         $.post("../GetMaterialByName", { name: name }, function (data, textStatus) {
+                this;
+                if(data.Id)
+                {
+                
+                    changeMaterial(index,data.Id,data.Name);
+                }
+            });
+    }
+</script>

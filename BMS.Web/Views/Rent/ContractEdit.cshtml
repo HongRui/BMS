@@ -1,0 +1,376 @@
+﻿@model OUDAL.RentContract
+
+@{
+   
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+    <script src="/BMS/Scripts/underscore-min.js"></script>
+
+    <script src="/BMS/Scripts/backbone-min.js"></script>
+<script type="text/javascript">
+    var enableSubmit = true;
+    var clientchecked = false;
+    jQuery(document).ready(function () {   
+        $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+        $("#ClientName").attr("autocomplete", "off");
+        $("#ClientName").blur(function ()
+        {
+            checkClient($("#ClientName").val());
+        });
+        $("#ClientName").typeahead({
+                source:function(query,process) {
+                    var matchCount = this.options.items;
+                    $.post("../../client/searchclient", { matchCount: matchCount, name: query }, function(respDate) {
+                        return process(respDate);
+                    });
+                }, updater: function (item) {
+                    checkClient(item);
+                    return item;
+                }
+        });
+        $("#BuildingName").attr("autocomplete", "off");
+        var buildingnames = new Array();
+        for(var i=0;i<buildings.length;i++){
+            buildingnames.push(buildings[i].Name);}
+      
+        $("#BuildingName").typeahead({
+            source:buildingnames 
+            , updater: function (item) {
+                setRooms(item);
+                return item;
+            }
+        });
+        $("#RoomName").attr("autocomplete", "off");
+        $('#RoomName').blur(function() {
+            setRoom($("#RoomName").val()); });  
+        var query = _(function() {
+            setRoom($("#RoomName").val());
+        }).debounce(500); 
+        $('#RoomName').bind('keypress', query); 
+        $("#RoomName").typeahead({
+            source:new Array() 
+                   , updater: function (item) {
+                       setRoom(item);
+                       return item;
+                   }
+        });
+        showRooms();
+        showPrices();
+        $("form").submit(function(e) {
+            var validchecked = true;
+            for (var i = 0; i < rentrooms.list.length; i++) {
+                var rentroom = rentrooms.list[i];
+                if (rentroom.IsRemoved == false) {
+                    if (rentroom.RentPrice == '' || isNaN(rentroom.RentPrice)) validchecked = false;
+                }
+            }
+            for (var i = 0; i < prices.list.length; i++) {
+                if (prices.list[i].IsRemoved == false) {
+                    var price = prices.list[i].obj;
+                    if (price.BillBeginDate == undefined || price.BillEndDate == undefined || isNaN(price.RentPrice) || price.BillBeginDate == "" || price.BillEndDate == "" || price.RentPrice == "") {
+                        validchecked = false;
+                    }
+                }
+            }
+            if (!validchecked) {
+                alert('请检查房屋列表和付款条件，金额和日期不能为空');
+                return false;
+            }
+            $("#rentRoomsString").val(JSON.stringify(rentrooms.list));
+            $("#pricesString").val(JSON.stringify(prices.list));
+            return true;
+        });
+    });
+    function checkClient(name) {
+        $.post("../../client/checkclient", { name:name }, function (respDate) {
+            if (respDate.success == true) {
+                $("#clientIcon").addClass("icon-ok");
+                $("#ClientId").val(respDate.obj);
+            }
+            else {
+                $("#clientIcon").removeClass("icon-ok");
+                $("#ClientId").val(0);
+            }
+        });
+    }
+
+    
+    function setRooms(name) {
+        var buildingid = 0;
+        for(var i=0;i<buildings.length;i++){if(buildings[i].Name==name) buildingid = buildings[i].Id;}
+        $("#BuildingId").val(buildingid);
+        $.post("../../building/getroomsByBuilding", { buildingId:buildingid }, function (respDate) {
+            if (respDate.success == true) {
+                rooms = respDate.obj;
+                var roomnames = new Array();
+                for(var i=0;i<rooms.length;i++){
+                    roomnames.push(rooms[i].Name);}
+                //alert(roomnames.length);
+                var autocomplete = $('#RoomName').typeahead();
+                autocomplete.data('typeahead').source = roomnames;
+            }
+            else {
+                rooms = new Array();
+            }
+            $("#RoomId").val('');
+            $("#RoomName").val('');
+        });
+    }
+    
+   
+    function setRoom(name) { var roomid = 0;
+        for(var i=0;i<rooms.length;i++){if(rooms[i].Name==name){
+            roomid = rooms[i].Id;}}
+        $("#RoomId").val(roomid);
+        if (roomid == 0) {
+            $("#roomIcon").removeClass("icon-ok");
+        } else {
+            $("#roomIcon").addClass("icon-ok");
+        }
+    }
+    
+    
+    
+    function AddRoom()
+    {
+    //    rentrooms.list.push( {RoomId:1,Dim:2,RentDim:3,Name:'abc'}); showRooms();
+    //return;
+        var id=parseInt( $("#RoomId").val());
+        for(var i=0;i<rentrooms.list.length;i++) {
+            if(rentrooms.list[i].RoomId==id){
+                alert("该房屋已在租赁房屋列表中");
+                return ;
+            }
+        }
+        var room=null;
+        for(var i=0;i<rooms.length;i++){if(rooms[i].Id==id){room=rooms[i];}}
+        if(room==null){alert("找不到房屋信息");return ;}
+            
+        rentrooms.list.push( {RoomId:room.Id,Dim:room.Dim,RentDim:room.RentDim,Name:$("#BuildingName").val()+' '+$("#RoomName").val()});
+        showRooms();
+    
+    }
+    function showRooms() {
+        
+        var element = $('#roomDiv');
+        var tpl = $('#tpl').html();
+        var render = _.template(tpl);
+        var html = render(rentrooms);
+        element.html(html);
+    }
+    function tiggerDelete(roomid) {
+        for (var i = 0; i < rentrooms.list.length; i++) {
+            if (rentrooms.list[i].RoomId == roomid) {
+                var rentroom = rentrooms.list[i];
+                rentroom.IsRemoved = !rentroom.IsRemoved;
+            }
+        }
+        showRooms();
+    }
+    function changeprice(roomid, obj) {
+        for (var i = 0; i < rentrooms.list.length; i++) {
+            if (rentrooms.list[i].RoomId == roomid) {
+                rentrooms.list[i].RentPrice =parseFloat(obj.value);
+                break;
+            }
+        }
+    }
+    function changeremark(roomid, obj) {
+        for (var i = 0; i < rentrooms.list.length; i++) {
+            if (rentrooms.list[i].RoomId == roomid) {
+                rentrooms.list[i].Remark = obj.value;
+                break;
+            }
+        }
+    }
+    function showPrices() {
+        
+        var element = $('#priceDiv');
+        var tpl = $('#tpl2').html();
+        var render = _.template(tpl);
+        var html = render(prices);
+        element.html(html);
+        $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    }
+    function AddPrice() {
+        prices.newIndex--;
+        prices.list.push({obj: { Id: prices.newIndex } });
+        showPrices();
+    }
+    function changeperiodremark(id, obj) {
+        for (var i = 0; i < prices.list.length; i++) {
+            if (prices.list[i].obj.Id == id) {
+                prices.list[i].obj.Remark = obj.value;
+                break;
+            }
+        }
+    }
+    function changeperiodprice(id, obj) {
+        for (var i = 0; i < prices.list.length; i++) {
+            if (prices.list[i].obj.Id == id) {
+                prices.list[i].obj.RentPrice =parseFloat(obj.value);
+                break;
+            }
+        }
+    }
+    function changebegindate(id, obj) {
+        for (var i = 0; i < prices.list.length; i++) {
+            if (prices.list[i].obj.Id == id) {
+                prices.list[i].obj.BillBeginDate = obj.value;
+                break;
+            }
+        }
+    }
+    function changeenddate(id, obj) {
+        for (var i = 0; i < prices.list.length; i++) {
+            if (prices.list[i].obj.Id == id) {
+                prices.list[i].obj.BillEndDate = obj.value;
+                break;
+            }
+        }
+    }
+    function tiggerPriceDelete(id) {
+        for (var i = 0; i < prices.list.length; i++) {
+            if (prices.list[i].obj.Id == id) {
+                prices.list[i].IsRemoved = !prices.list[i].IsRemoved;
+            }
+        }
+        showPrices();
+    }
+    var rentrooms = { list: @Html.Raw(ViewBag.RoomsString) };
+    var buildings = @Html.Raw(ViewBag.Buildings);
+    var rooms = new Array();
+    var prices ={newIndex:0, list: @Html.Raw(ViewBag.Prices) }; 
+</script>
+<div style="width:980px;margin:0px auto" class="row">
+    @using (Html.BeginForm() ){
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        <fieldset>
+            <legend>合同信息</legend>
+            <div class="well span3">
+                <strong>基本信息</strong>
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.ClientId)
+                </div>
+                <div class="editor-field">
+                    @Html.TextBox("ClientName",(string)ViewBag.ClientName)<i id="clientIcon"></i>
+                    @Html.HiddenFor(model => model.ClientId)
+                    @Html.ValidationMessageFor(model => model.ClientId)
+                </div>
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.SerialNum)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.SerialNum)
+                    @Html.ValidationMessageFor(model => model.SerialNum)
+                </div> 
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.ContractCode)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.ContractCode)
+                    @Html.ValidationMessageFor(model => model.ContractCode)
+                </div> 
+                @*<div class="editor-label">
+                    @Html.LabelFor(model => model.RentPriceType)
+                </div>
+                <div class="editor-field">
+                    @Html.MyEnumFor(model => model.RentPriceType,typeof(RentPriceTypeEnum),false)
+                    @Html.ValidationMessageFor(model => model.RentPriceType)
+                </div> *@
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.RentBeginDate)
+                </div>
+                <div class="editor-field">
+                    @Html.MyDateFor(model => model.RentBeginDate,false)
+                    @Html.ValidationMessageFor(model => model.RentBeginDate)
+                </div> 
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.RentEndDate)
+                </div>
+                <div class="editor-field">
+                    @Html.MyDateFor(model => model.RentEndDate,false)
+                    @Html.ValidationMessageFor(model => model.RentEndDate)
+                </div> 
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.Remark)
+                </div>
+                <div class="editor-field">
+                    @Html.TextAreaFor(model => model.Remark,3,10,null)
+
+                    @Html.ValidationMessageFor(model => model.Remark)
+                </div>
+            </div>    
+            <div class="span8 well">
+                <div><strong>租赁房屋</strong></div><input type="hidden" id="rentRoomsString" name="rentRoomsString"/>
+                <div id="roomDiv"></div>
+            
+                <div><strong>选择房屋</strong> 
+                    <br/>项目：<input type="text" id="BuildingName"/><input type="hidden" id="BuildingId"/>
+                    房号：<input type="text" id="RoomName"/><input type="hidden" id="RoomId"/>
+                    <i id="roomIcon"></i><input type="button" value="添加" onclick="AddRoom();"/>
+                </div>    
+            </div>
+            <div class="span8 well">
+                <div><strong>付款条款</strong></div><input type="hidden" id="pricesString" name="pricesString"/>
+                <table>
+                    <tr>
+                        <td class="text-right" >@Html.LabelFor(model => model.RentPriceType,new {@style="display:inline"}) </td>
+                        <td class="span3">@Html.MyEnumFor(model => model.RentPriceType,typeof(RentPriceTypeEnum),false)
+                            @Html.ValidationMessageFor(model => model.RentPriceType)</td>
+                        <td class="text-right">@Html.LabelFor(model => model.Deposit,new {@style="display:inline"}) </td>
+                        <td class="span3">@Html.TextBoxFor(model => model.Deposit,new {@style="width:6em"})@Html.ValidationMessageFor(model => model.Deposit)<text>元</text></td>
+                    </tr>
+                    <tr>
+                        <td class="text-right">@Html.LabelFor(model => model.BillDay,new {@style="display:inline"}) </td>
+                        <td>@Html.TextBoxFor(model => model.BillDay,new {@style="width:6em"})@Html.ValidationMessageFor(model => model.BillDay)<text>(1-30)</text></td>
+                        <td class="text-right">@Html.LabelFor(model => model.BillMonth,new {@style="display:inline"}) </td>
+                        <td>@Html.TextBoxFor(model => model.BillMonth,new {@style="width:6em"})@Html.ValidationMessageFor(model => model.BillMonth)<text>(1-12)</text></td>
+                    </tr>
+                    <tr>
+                        <td class="text-right"></td><td></td><td class="text-right"></td><td></td>
+                    </tr>
+                </table>
+                <div id="priceDiv"></div>
+            </div>
+        </fieldset>
+        <div class="span12 text-center"><p>@MyControls.SubmitBtn("保存") &nbsp;&nbsp;&nbsp; @MyControls.Btn("取消","window.close()")</p></div>
+        
+    }
+</div>
+<script type="text/template"id="tpl">
+                <table class="table table-bordered">
+                    <tr>
+                        <td></td><td>房号</td><td>产证面积</td><td>租赁面积</td><td>租金</td><td>备注</td>
+                    </tr> 
+                    <%for(var i=0;i<list.length;i++){ var item = list[i];%>
+                    <tr><td><input type="button" onclick="tiggerDelete(<%=item.RoomId%>)" value="<%=item.IsRemoved?'恢复':'删除'%>" /></td>
+                        <td>
+                            <input type="hidden" id='itemId<%=item.Id%>'/>
+                            <input type="hidden" id='roomId<%=item.RoomId%>'/>
+                            <span id="roomName<%=item.Id%>" style="<%=item.IsRemoved?'text-decoration:line-through':''%>"><%=item.Name%></span></td>
+                        <td style="text-align:right"><%=item.Dim%></td>
+                        <td style="text-align:right"><%=item.RentDim%></td>
+                        <td><input type="text" id="roomPrice<%=item.Id%>" value="<%=item.RentPrice%>" style="width:4em" onchange="changeprice(<%=item.RoomId%>,this)"/></td>
+                        <td><input type="text" id="roomRemark<%=item.Id%>" value="<%=item.Remark%>"onchange="changeremark(<%=item.RoomId%>,this)" /></td>
+                    </tr>
+                    <%}%>
+                </table>
+            </script>
+<script type="text/template"id="tpl2">
+                <table class="table table-bordered">
+                    <tr>
+                        <td></td><td>开始日期</td><td>结束日期</td><td>租金</td><td>备注</td>
+                    </tr> 
+                    <%for(var i=0;i<list.length;i++){ var item = list[i].obj;%>
+                    <tr><td><input type="button" onclick="tiggerPriceDelete(<%=item.Id%>)" value="<%=list[i].IsRemoved?'恢复':'删除'%>" /> </td>                       
+                        <td><input type="text" value="<%=item.BillBeginDate%>" class="text60 datepicker" onchange="changebegindate(<%=item.Id%>,this)"style="<%=list[i].IsRemoved?'text-decoration:line-through':''%>"/></td>
+                       <td><input type="text" value="<%=item.BillEndDate%>" class="text60 datepicker" onchange="changeenddate(<%=item.Id%>,this)"style="<%=list[i].IsRemoved?'text-decoration:line-through':''%>"/></td>
+                       <td><input type="text" value="<%=item.RentPrice%>"class="text60" onchange="changeperiodprice(<%=item.Id%>,this)" style="<%=list[i].IsRemoved?'text-decoration:line-through':''%>"/></td>
+                        <td><input type="text" value="<%=item.Remark%>" class="span2"  onchange="changeperiodremark(<%=item.Id%>,this)" style="<%=list[i].IsRemoved?'text-decoration:line-through':''%>"/></td>
+                    </tr>
+                    <%}%>
+                </table>
+    <input type="button" value="增加" onclick="AddPrice()"/>
+            </script>

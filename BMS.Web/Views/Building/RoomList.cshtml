@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "房屋清单";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("RoomListQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");    
+        grid.setCell(rowid, "OwnnerType", OwnnerTypeName(aData.OwnnerType));
+        grid.setCell(rowid, "RoomType", RoomTypeName(aData.RoomType));
+     }
+     @Html.EnumNameFunction("OwnnerType",typeof(OwnnerTypeEnum))
+    @Html.EnumNameFunction("RoomType",typeof(RoomTypeEnum))
+}); 
+    var colModelGrid = [{ name: 'Id', key: true, index: 'id', width: 1, align: 'left', hidden: true }
+, { name: 'Building', label: "项目", index: 'b.Name', align: 'left', width: 150 }
+,{ name: 'Name',label:"房号", index: 'r.Name', align: 'left' ,width:150}
+, { name: 'OwnnerType', label: "所有权", index: 'a.FullName', align: 'left', width: 50 }
+, { name: 'RoomType', label: "类型", index: 'a.Contact', align: 'left', width: 50 }
+    , { name: 'Dim', label: "产证面积", index: 'a.Phone',formatter:'number', align: 'right', width: 70 }
+    , { name: 'RentDim', label: "租赁面积", index: 'a.Address',formatter:'number', align: 'right', width: 70 }
+     , { name: 'Client', label: "租户", index: 'a.Address', align: 'left', width: 200 }
+,{ name: 'Remark',label:"备注", index: 'a.Remark', align: 'left' ,width:200}];
+function rowclick(id)
+{
+    OpenFullWindow("./RoomView/" + id, "_blank");
+}
+function AddNew()
+{
+    OpenFullWindow("./RoomEdit/0");
+}
+function SearchClick()
+{ 
+        $('#listGrid').appendPostData({ Name: $("#Name").val()});      
+        $( '#listGrid').appendPostData({ FullName:$("#FullName").val()});
+
+    $('#listGrid').trigger('reloadGrid');
+}        
+function ShowHidSearchDiv()
+    {
+        $("#SearchDiv").toggle();
+        if($("#SearchDiv").css('display')=='none')
+        {
+            $("#btnShowHide1").val("打开搜索条件");
+            $("#btnShowHide2").val("打开搜索条件");            
+        }else{
+            $("#btnShowHide1").val("关闭搜索条件");
+            $("#btnShowHide2").val("关闭搜索条件");
+        }        
+    }
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+@Html.ShortInput("Name", "房号:")
+项目 : @Html.DropDownList("Building",RentBLL.GetBuilding())
+@MyControls.SearchBtn()
+@MyControls.Btn("新增","AddNew()")
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+

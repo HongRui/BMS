@@ -1,0 +1,53 @@
+﻿@model OUDAL.Asset
+@using Mall
+@using BMS.Web.BLL
+@using OUDAL
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+<h2>Edit</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+@section Main{
+@if(ViewBag.valid!=null){
+@ViewBag.valid
+}
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>Asset</legend>
+         @Html.HiddenFor(model => model.Id)
+        <table class="form">
+            <tr>@Html.MyDisplayFor(m => m.CompanyId,Company.GetName(Model.CompanyId))</tr>
+            <tr>@Html.MyDropdownFor(m => m.Area, false, ViewBag.arealist as List<SelectListItem>)</tr>
+            <tr>@Html.MyDropdownFor(m => m.Catalog, false, BMS.Web.BLL.AssetCatalogBLL.SelectItems)</tr>
+            <tr>@Html.MyTextFor(m => m.Name)</tr>
+            <tr>@Html.MyTextFor(m=>m.Brand)</tr>
+            <tr>@Html.MyTextFor(m=>m.SN)</tr>
+            <tr>@Html.MyTextFor(m=>m.Supplier)</tr>
+            <tr>@Html.MyTextFor(m=>m.Spec)</tr>
+            <tr>@Html.MyTextFor(m=>m.AssetNo)</tr>
+            <tr>@Html.MyBoolFor(m=>m.IsSAP,false)</tr>
+            <tr>@Html.MyTextFor(m=>m.OldAssetNo)</tr>
+            <tr>@Html.MyTextFor(m=>m.Price)</tr>
+            <tr>@Html.MyDateFor(m => m.BuyDate,false)</tr>
+            
+            <tr>@Html.MyTextFor(m=>m.Remark)</tr>
+            <tr>@Html.MyTextFor(m=>m.BuyRequestNo)</tr>
+        </table>
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+        
+}
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

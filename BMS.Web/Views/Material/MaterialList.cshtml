@@ -1,0 +1,51 @@
+﻿@using BMS.Web
+@using BMS.Web.BLL
+@using OUDAL
+@model int
+@{
+    ViewBag.Title = "物资名称列表";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("MaterialListQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");        
+     }
+}); 
+var colModelGrid= [{ name: 'Id', index: 'Id', width: 1, align: 'left',hidden:true }
+,{ name: 'Catalog',label:"类别", index: 'CatalogId', align: 'left' ,width:200 }
+,{ name: 'Name',label:"名称", index: 'Name', align: 'left' ,width:200}
+,{ name: 'Spec',label:"品牌/型号/规格", sortable:false, align: 'left' ,width:200}
+,{ name: 'Department',label:"保管部门",index:"departmentid", sortable:true, align: 'left' ,width:200}
+,{ name: 'Remark',label:"备注", sortable:false, align: 'left',width:200 }];
+function rowclick(id)
+{
+    OpenFullWindow("./MaterialView/"+id,"_blank");
+}
+function AddNew()
+{
+    OpenFullWindow("./MaterialEdit/0");
+}
+function SearchClick()
+{ 
+    $('#listGrid').appendPostData({ Name: $("#Name").val()}); 
+    $('#listGrid').trigger('reloadGrid');
+}        
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+<label class="len80" >部门</label>@MyControls.DepartmentDropdown("departments") 
+<label class="len80">名称</label><input id="Name" type="text" />
+<input type="button" onclick="SearchClick();" value="查询" />
+<input type="button" onclick="AddNew();" value="新增" />
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+

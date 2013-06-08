@@ -1,0 +1,39 @@
+﻿@model OUDAL.MaterialOut
+@using OUDAL
+@using BMS.Web;
+@using BMS.Web.BLL;
+@{
+    ViewBag.Title = "物资出库";
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+}
+@section Main{
+<script type="text/javascript">
+   
+</script>
+<h1>物料领用单</h1>
+    @Html.HiddenFor(model => model.Id)
+    <table class="table table-bordered"><col width="80" /><col width="200" />
+    <tr><td class="tdRight">单号</td><td>@Model.Code</td></tr>
+        <tr>@Html.MyDisplayFor(m => m.OutDate)</tr>
+        <tr><td class="tdRight">领用部门</td><td>@DepartmentBLL.GetNameById(Model.DepartmentId)</td></tr>
+        <tr><td class="tdRight">领用人</td><td>@UserBLL.GetNameById(Model.PersonId)</td></tr>
+        <tr>@Html.MyDisplayFor(m=>m.Remark)</tr>
+    </table>
+    <table class="table table-bordered">
+    <thead>
+    <tr><td>种类</td><td>名称</td><td>数量</td></tr>
+    </thead>
+    @foreach(var item in ViewBag.Items2)
+    {
+        <tr>
+        <td>@AssetCatalogBLL.GetNameById(item.CatalogId)</td>
+        <td>@item.Name</td>
+        <td>@item.Num</td>
+        </tr>
+    }
+    </table>
+    <div><br />
+    领用人签名：＿＿＿＿＿＿＿＿
+    <br /><br />日期&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;：＿＿＿＿＿＿＿＿
+    </div>
+}

@@ -1,0 +1,73 @@
+﻿@model OUDAL.Asset
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>Asset</legend>
+
+    <div class="display-label">CompanyId</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CompanyId)
+    </div>
+
+    <div class="display-label">Catalog</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Catalog)
+    </div>
+
+    <div class="display-label">Name</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Name)
+    </div>
+
+    <div class="display-label">Brand</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Brand)
+    </div>
+
+    <div class="display-label">SN</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.SN)
+    </div>
+
+    <div class="display-label">Supplier</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Supplier)
+    </div>
+
+    <div class="display-label">AssetNo</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.AssetNo)
+    </div>
+
+    <div class="display-label">Price</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Price)
+    </div>
+
+    <div class="display-label">BuyDate</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.BuyDate)
+    </div>
+
+    <div class="display-label">State</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.State)
+    </div>
+
+    <div class="display-label">Remark</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Remark)
+    </div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}

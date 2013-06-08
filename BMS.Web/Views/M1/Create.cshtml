@@ -1,0 +1,57 @@
+﻿@model OUDAL.MaterialInItem
+@using BMS.Web
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>MaterialInItem</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.MaterialId)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.MaterialId)
+            @Html.ValidationMessageFor(model => model.MaterialId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.InId)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.InId)
+            @Html.ValidationMessageFor(model => model.InId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.UnitPrice)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.UnitPrice)
+            @Html.ValidationMessageFor(model => model.UnitPrice)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Num)
+        </div>
+        <div class="editor-field">
+            @Html.MyDecimal("Num", null)
+            @Html.MyValidation("Num")
+        </div>
+
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

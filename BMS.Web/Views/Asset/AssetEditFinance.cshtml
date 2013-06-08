@@ -1,0 +1,57 @@
+﻿@model OUDAL.Asset
+@using OUDAL
+@using BMS.Web
+@using BMS.Web.BLL
+@{
+   
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $(".datepicker").datepicker({ changeMonth: true, changeYear: true, showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true });
+
+    }); 
+</script>
+<div style="width:500px;margin:0px auto">
+@using (Html.BeginForm() ){
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    <fieldset>
+        <legend>设施设备-财务信息</legend>
+        
+        <div class="editor-field">
+            @Html.MyTextFor(model=>model.Price)
+            @Html.ValidationMessageFor(model => model.Price)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Price)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ReceiptNo)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ReceiptNo)
+            @Html.ValidationMessageFor(model => model.ReceiptNo)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.BuyDate)
+        </div>
+        <div class="editor-field">
+            @Html.MyDateFor(model=>model.BuyDate,false)
+        </div>
+                
+        <div class="editor-label">
+            @Html.LabelFor(model => model.NCNo)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.NCNo)
+            @Html.ValidationMessageFor(model => model.NCNo)
+        </div>
+             
+    </fieldset>
+    <p><input class="btn" type="submit" value="保存" /> <input class="btn" type="button" value="取消" onclick="window.close()" /></p>
+}
+</div>
+

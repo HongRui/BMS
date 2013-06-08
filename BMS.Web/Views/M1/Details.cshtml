@@ -1,0 +1,35 @@
+﻿@model OUDAL.MaterialInItem
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>MaterialInItem</legend>
+
+    <div class="display-label">MaterialId</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MaterialId)
+    </div>
+
+    <div class="display-label">InId</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.InId)
+    </div>
+
+    <div class="display-label">UnitPrice</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.UnitPrice)
+    </div>
+
+    <div class="display-label">Num</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Num)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,118 @@
+﻿@using BMS.Web
+@using BMS.Web.BLL
+@using OUDAL
+@{
+    ViewBag.Title = "供应商清单";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("SupplierListQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");    
+        grid.setCell(rowid,"State",  StateName(aData.State));
+        grid.setCell(rowid, "Level", LevelName(aData.Level));
+        grid.setCell(rowid, "Type", TypeName(aData.Type));
+     }
+     function StateName(state)
+     {
+        switch(state)
+        {
+            case 0:return "潜在";break;
+            case 1:return "往来";break;
+            case 2:return "黑名单";break;
+        }
+     }
+     function LevelName(level)
+     {
+        switch(level)
+        {
+            case 0:return "A";break;
+            case 1:return "B";break;
+            case 2:return "C";break;
+            case 3:return "D";break;
+            case 4:return "E";break;
+            case 5:return "F";break;
+        }
+     }
+     function TypeName(state) {
+         switch (state) {
+             case 0: return "生产商"; break;
+             case 1: return "代理商"; break;
+             case 2: return "经销商"; break;
+         }
+     }
+}); 
+var colModelGrid= [{ name: 'id', index: 'id', width: 1, align: 'left',hidden:true }
+,{ name: 'State',label:"状态", index: 'a.State', align: 'left' ,width:40}
+, { name: 'Level', label: "等级", index: 'a.Level', align: 'left', width: 40 }
+, { name: 'Type', label: "类型", index: 'a.Type', align: 'left', width: 50 }
+, { name: 'Code', label: "编号", index: 'a.Code', align: 'left', width: 50 }
+, { name: 'Catalog', label: "分类", index: 'a.Catalog', align: 'left', width: 50 }
+, { name: 'Name', label: "名称", index: 'a.Name', align: 'left', width: 100 }
+, { name: 'QYXZ', label: "企业性质", index: 'a.QYXZ', align: 'left', width: 100 }
+,{ name: 'FullName',label:"全称", index: 'a.FullName', align: 'left' ,width:200 }
+,{ name: 'Brand',label:"品牌", index: 'a.Brand', align: 'left' ,width:100}
+,{ name: 'Contact',label:"联系人", index: 'a.Contact', align: 'left' ,width:100}
+,{ name: 'ContactPhone',label:"电话", index: 'a.ContactPhone', align: 'left' ,width:100}
+, { name: 'ContactMobile', label: "手机", index: 'a.ContactMobile', width: 100 }
+];
+function rowclick(id)
+{
+    OpenFullWindow("./SupplierView/"+id,"_blank");
+}
+function AddNew()
+{
+    OpenFullWindow("./SupplierEdit/0");
+}
+function SearchClick()
+{ 
+        $('#listGrid').appendPostData({ Name: $("#Name").val()});
+       
+        var statearray=new Array();
+        $("input[name='state']:checked" ).each(function(){statearray.push($( this).val());});        
+        $( '#listGrid').appendPostData({ State:statearray}); 
+        var level=new Array();
+        $("input[name='level']:checked" ).each(function(){level.push($( this).val());});
+        $( '#listGrid').appendPostData({ level:level}); 
+
+    $('#listGrid').trigger('reloadGrid');
+}        
+function ShowHidSearchDiv()
+    {
+        $("#SearchDiv").toggle();
+        if($("#SearchDiv").css('display')=='none')
+        {
+            $("#btnShowHide1").val("打开搜索条件");
+            $("#btnShowHide2").val("打开搜索条件");            
+        }else{
+            $("#btnShowHide1").val("关闭搜索条件");
+            $("#btnShowHide2").val("关闭搜索条件");
+        }        
+    }
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+@Html.ShortInput("Name", "名 称:")
+
+<label class="len60" >状 态：</label>
+    <input type="checkbox" id="state0" name="state" value="0" />潜在&nbsp;&nbsp;
+    <input type="checkbox" id="state1" name="state" value="1" />认证&nbsp;&nbsp;
+    <input type="checkbox" id="state2" name="state" value="2" />黑名单&nbsp;&nbsp;
+<label class="len60" >等 级：</label>
+    <input type="checkbox" id="level0" name="level" value="0" />A&nbsp;&nbsp;
+    <input type="checkbox" id="level1" name="level" value="1" />B&nbsp;&nbsp;
+    <input type="checkbox" id="level2" name="level" value="2" />C&nbsp;&nbsp;
+    <input type="checkbox" id="level3" name="level" value="3" />D&nbsp;&nbsp;
+    <input type="checkbox" id="level4" name="level" value="4" />E &nbsp;&nbsp;  
+<input type="button" onclick="SearchClick();" value="查询" />
+<input type="button" onclick="AddNew();" value="新增" />
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+

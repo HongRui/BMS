@@ -1,0 +1,52 @@
+﻿@using BMS.Web
+@using BMS.Web.BLL
+@using OUDAL
+@model int
+@{
+    ViewBag.Title = "物资名称列表";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("MaterialListQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>"); 
+        grid.setCell(rowid,"Catalog","<a href='#' onclick=rowclick("+rowid+")>"+aData.Catalog+"</a>");      
+     }
+}); 
+var colModelGrid= [{ name: 'id', index: 'id', width: 1, align: 'left',hidden:true }
+,{ name: 'Catalog',label:"类别", index: 'CatalogId', align: 'left' }
+,{ name: 'Name',label:"名称", index: 'Name', align: 'left' }
+,{ name: 'Spec',label:"品牌/型号/规格", sortable:false, align: 'left' }
+,{ name: 'Remark',label:"备注", sortable:false, align: 'left' }];
+function rowclick(id)
+{
+
+    var aData= $('#listGrid').getRowData(id);   
+    window.opener.changeMaterial(@Request["index"],aData.id,aData.Name);
+    window.close();
+}
+function AddNew()
+{
+    OpenMiddleWindow("./MaterialEdit/0","selectmaterialadd");
+}
+function SearchClick()
+{ 
+    $('#listGrid').appendPostData({ Name: $("#Name").val()}); 
+    $('#listGrid').trigger('reloadGrid');
+}        
+</script>
+
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+<label class="len80">名称</label><input id="Name" type="text" />
+<input type="button" onclick="SearchClick();" value="查询" />
+<input type="button" onclick="AddNew();" value="新增" />新增后请点“查询”按钮刷新列表
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+

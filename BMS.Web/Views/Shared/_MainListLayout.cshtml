@@ -1,0 +1,147 @@
+﻿@using BMS.Web
+@using BMS.Web.BLL
+@using OUDAL
+@{
+    var isMall=Request.Url.AbsolutePath.ToLower().Contains("/mall/");
+    var jtID = PMBLL.GetDeptByName("上海绿地商业(集团)有限公司");
+    var lwID = PMBLL.GetDeptByName("上海卢湾绿地商业管理有限公司");
+    var bjID = PMBLL.GetDeptByName("北京绿地京城商业管理有限公司");
+    var ncID = PMBLL.GetDeptByName("南昌绿地商业管理有限公司");
+    var mallid = "";
+    if (Request.RequestContext.RouteData.Values["mallid"] != null){mallid = Request.RequestContext.RouteData.Values["mallid"].ToString();}
+        
+}
+<!DOCTYPE html>
+<html>
+<head>
+   <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/bundles/BootstrapCss")
+    @Styles.Render("~/Content/redmond")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/BootstrapJs")
+    @Scripts.Render("~/bundles/MyJs")
+    @Styles.Render("~/Content/jqGrid/css")
+    @Scripts.Render("~/bundles/jqGrid")
+    @RenderSection("scripts", required: false)
+<script type="text/javascript">
+    var rootpath = '@Url.Content("~/")';
+    function logout() {
+        if (confirm("是否要退出系统？")) {
+            window.location.href = rootpath + "account/logoff?returnUrl=" + rootpath + "sale/sale";
+        }
+    }
+    function changepassword() {
+        OpenMiddleWindow(rootpath + "account/changepassword", "changepassword");
+    }
+    function selectstore() {
+        window.location.href = rootpath + "/Account/SelectStore";
+    }
+</script>
+</head>
+
+<body>
+<div class="navbar">
+    <div class="navbar-inner">
+      <div style="width: auto;" class="container">
+        <a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a><img src="@Url.Content("~/content/images/glcp.png")" style="float:left" />
+        <a href="#" class="brand">绿地商业集团</a>
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li><a href="@Url.Content("~")">首页</a></li>
+            @if (isMall)
+            {
+                if(UserInfo.CurUser.HasRight("物资物料管理"))
+                {
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">物资物料管理<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("物资种类维护", "CatalogView", "AssetCatalog")</li>
+                            <li>@Html.ActionLink("物资名称维护", "MaterialList", "Material")</li>
+                            <li>@Html.ActionLink("物资入库", "MaterialInList", "Material")</li>
+                            <li>@Html.ActionLink("物资出库", "MaterialOutList", "Material")</li>
+                            <li>@Html.ActionLink("物资盘点1", "Report", "Material")</li>
+                            <li>@Html.ActionLink("物资盘点2", "Report2", "Material")</li>
+                            <li>@Html.ActionLink("物资出库汇总", "ReportOutStore", "Material")</li>
+                            <li>@Html.ActionLink("物资出库明细", "ReportOutStoreDetail", "Material")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">设施设备管理<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("物资种类维护", "CatalogView", "AssetCatalog")</li>
+                            <li>@Html.ActionLink("设施设备清单", "AssetList", "Asset")</li>
+                            <li>@Html.ActionLink("员工设备信息", "UserIndex", "Asset")</li>
+                
+                        </ul>
+                    </li>
+                }
+            }
+            else
+            {
+                if(UserInfo.CurUser.HasRight("供应商管理"))
+                {
+                    <li>@Html.ActionLink("供应商资料", "SupplierList", "Supplier")</li>
+                }
+                if(UserInfo.CurUser.HasRight("存量管理"))
+                {
+                    <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">存量管理<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>@Html.ActionLink("公司列表", "List", "Company")</li>
+                        <li>@Html.ActionLink("项目列表", "BuildingList", "Building")</li>
+                        <li>@Html.ActionLink("房屋列表", "RoomList", "Building")</li>
+                        <li>@Html.ActionLink("房屋列表", "List", "Client")</li>
+                        <li>@Html.ActionLink("合同列表", "ContractList", "Rent")</li>
+                    </ul>
+                    </li>
+               
+                }
+                if(UserInfo.CurUser.HasRight("系统管理"))
+                {
+                <li class="dropdown">
+                    
+                
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">系统管理<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>@Html.ActionLink("部门维护", "DepartmentView", "System")</li>
+                        <li>@Html.ActionLink("用户资料维护", "UserIndex", "System")</li>
+                        <li>@Html.ActionLink("角色权限维护", "RoleIndex", "System")</li>
+                    </ul>
+                    </li>
+                }
+            }
+          </ul>
+          
+          <ul class="nav pull-right">    
+            <li class="active"><a href="#" >@UserInfo.CurUser.Name</a></li>        
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a data-toggle="dropdown" class="dropdown-toggle" href="#">@BMS.Web.BLL.Utilities.GetCurUnitName( mallid)<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="@Url.Content("~")">系统管理</a></li>
+                <li><a href="@Url.Content("~/Mall/"+jtID)">商业集团</a></li>
+                <li><a href="@Url.Content("~/Mall/"+lwID)">卢湾商管</a></li>
+                  <li><a href="@Url.Content("~/Mall/"+bjID)">北京商管</a></li>    
+                  <li><a href="@Url.Content("~/Mall/"+ncID)">南昌商管</a></li>                
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div>
+    </div><!-- /navbar-inner -->
+  </div>
+@RenderBody() 
+@RenderSection("Main", false)          
+<footer>
+@RenderSection("Footer",false)
+</footer>
+</body>
+</html>
+

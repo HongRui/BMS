@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>商场管理</title>
+    <link href="/BMS/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="/BMS/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/BMS/content/redmond/jquery-ui-1.8.17.custom.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/BMS/scripts/jqgrid4/css/ui.jqgrid.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/BMS/scripts/jqgrid4/plugins/ui.multiselect.css" />
+    <script src="/BMS/Scripts/jquery-1.7.1.min.js" type="text/javascript"></script>
+    <script src="/BMS/Scripts/MyJs.js" type="text/javascript"></script> 
+    <script type="text/javascript" src="/BMS/scripts/jquery.ui.datepicker-zh-CN.js"></script>
+    <script type="text/javascript" src="/BMS/scripts/jquery-ui-1.8.18.min.js"></script>
+    <script type="text/javascript" src="/BMS/scripts/jqgrid4/js/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/BMS/scripts/jqgrid4/plugins/ui.multiselect.js"></script>
+    <script type="text/javascript" src="/BMS/scripts/jqgrid4/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="/BMS/scripts/jqgrid4/plugins/grid.postext.js"></script>
+    <script type="text/javascript" src="/BMS/Scripts/modernizr-1.7.min.js"></script>
+    <script type="text/javascript" src="/BMS/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript">
+    var rootpath = '/BMS/';
+</script>
+</head>
+
+<body>
+<div class="navbar">
+    <div class="navbar-inner">
+      <div style="width: auto;" class="container">
+        <a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a><img src="/BMS/content/images/glcp.png" style="float:left" />
+        <a href="#" class="brand">绿地商业集团</a>
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li><a href="/BMS/">首页</a></li>
+                <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">市场推广管理<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/BMS/Mall/4/AssetCatalog/CatalogView">物资种类维护</a></li>
+                            <li><a href="/BMS/Mall/4/Material/MaterialList">物资名称维护</a></li>
+                            <li><a href="/BMS/Mall/4/Material/MaterialInList">物资入库</a></li>
+                            <li><a href="/BMS/Mall/4/Material/MaterialOutList">物资出库</a></li>
+                            <li><a href="/BMS/Mall/4/Material/Report">物资盘点</a></li>
+                            <li><a href="/BMS/Mall/4/Material/ReportOutStore">物资出库汇总</a></li>
+                            <li><a href="/BMS/Mall/4/Material/ReportOutStoreDetail">物资出库明细</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">物资物料管理<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/BMS/Mall/4/AssetCatalog/CatalogView">物资种类维护</a></li>
+                            <li><a href="/BMS/Mall/4/Material/MaterialList">物资名称维护</a></li>
+                            <li><a href="/BMS/Mall/4/Material/MaterialInList">物资入库</a></li>
+                            <li><a href="/BMS/Mall/4/Material/MaterialOutList">物资出库</a></li>
+                            <li><a href="/BMS/Mall/4/Material/Report">物资盘点</a></li>
+                            <li><a href="/BMS/Mall/4/Material/ReportOutStore">物资出库汇总</a></li>
+                            <li><a href="/BMS/Mall/4/Material/ReportOutStoreDetail">物资出库明细</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">设施设备管理<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/BMS/Mall/4/AssetCatalog/CatalogView">物资种类维护</a></li>
+                            <li><a href="/BMS/Mall/4/Asset/AssetList">设施设备清单</a></li>
+                            <li><a href="/BMS/Mall/4/Asset/UserIndex">员工设备信息</a></li>
+                
+                        </ul>
+                    </li>
+          </ul>
+          
+          <ul class="nav pull-right">    
+            <li class="active"><a href="#" >Admin</a></li>        
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a data-toggle="dropdown" class="dropdown-toggle" href="#">北京商管<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/BMS/">系统管理</a></li>
+                <li><a href="/BMS/Mall/2">商业集团</a></li>
+                <li><a href="/BMS/Mall/3">卢湾商管</a></li>
+                <li><a href="/BMS/Mall/4">北京商管</a></li>                
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div>
+    </div><!-- /navbar-inner -->
+  </div>
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="ui-widget ui-widget-content ui-corner-all searchdiv" > 
+        <label class="len60" for="Catalog">活动类型</label><input class="text60" id="Catalog" name="Catalog" type="text" value="" />
+<label class="len60" for="Supplier">活动名称</label><input class="text60" id="Supplier" name="Supplier" type="text" value="" />
+<label class="len60" for="DateFrom1">活动开始日期</label><input class="text60 datepicker" id="DateFrom1" name="DateFrom1" type="text" value='' /> - <input class="text60 datepicker" id="DateTo1" name="DateTo1" type="text" value='' />
+    <input type="submit"  value="查询" />
+    <input type="button" value="打印" onclick="var reportdiv = $('#reportDiv'); var printwindow = window.open('/am6pm9/content/print.html');  "/>
+</div>
+      <div id="reportDiv"> 
+          <br />
+<table class="table table-bordered">
+        <thead>
+        <tr>
+        <td width="90">活动类型</td><td width="200">活动名称</td><td width="160">活动日期</td>
+            <td>预算费用</td><td>发生费用</td><td>活动状态</td><td>执行情况</td>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+            
+            <tr>
+            <td>媒体广告</td>
+            <td>1月份广告</td>
+            <td> 2012-1-1 -- 2012-1-31</td>
+            <td>100,000</td>
+            <td>95,000</td>
+            <td>已完成</td>
+            <td>地铁广告...</td>
+            </tr>
+            <tr>
+            <td>媒体广告</td>
+            <td>2月份广告</td>
+            <td> 2012-2-1 -- 2012-2-29</td>
+            <td>100,000</td>
+            <td>98,000</td>
+            <td>已完成</td>
+            <td>...</td>
+            </tr>
+            <tr>
+            <td>主题活动</td>
+            <td>迎新春活动</td>
+            <td> 2012-1-15 -- 2012-2-15</td>
+            <td>200,000</td>
+            <td>182,000</td>
+            <td>已完成</td>
+            <td>...</td>
+            </tr>
+            <tr>
+            <td>媒体广告</td>
+            <td>2月份广告</td>
+            <td> 2012-3-1 -- 2012-3-31</td>
+            <td>100,000</td>
+            <td></td>
+            <td>未开始</td>
+            <td></td>
+            </tr>
+            <tr>
+            
+        </tbody>
+        <tfoot>
+       
+        </tfoot>
+        </table>
+
+
+    </div>
+
+</body>
+</html>
+

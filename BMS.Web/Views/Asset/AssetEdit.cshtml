@@ -1,0 +1,102 @@
+﻿@model OUDAL.Asset
+@using OUDAL
+@using BMS.Web
+@using BMS.Web.BLL
+@{
+   
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+<script type="text/javascript">
+    jQuery(document).ready(function () {   
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+   
+}); 
+</script>
+<div style="width:500px;margin:0px auto">
+@using (Html.BeginForm() ){
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    <fieldset>
+        <legend>设施设备</legend>
+        
+        <div class="editor-label">
+            @Html.LabelFor(model => model.AssetType)
+        </div>
+        <div class="editor-field">
+             @Html.MyEnumFor(model => model.AssetType, typeof(AssetType), false)
+            @Html.ValidationMessageFor(model => model.AssetType)
+        </div>         
+        <div class="editor-label">
+            @Html.LabelFor(model => model.CatalogId)
+        </div>
+        <div class="editor-field">
+            @MyControls.CatalogSelect("",Model.CatalogId,OUDAL.AssetCatalogBLL.GetNameById(Model.CatalogId))
+            @Html.ValidationMessageFor(model => model.CatalogId)
+        </div>   
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Name)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Name)
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>             
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Spec)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Spec)
+            @Html.ValidationMessageFor(model => model.Spec)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.SN)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.SN)
+            @Html.ValidationMessageFor(model => model.SN)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Supplier)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Supplier)
+            @Html.ValidationMessageFor(model => model.Supplier)
+        </div>
+          
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.AssetNo) <a href="@Url.Content("~/content/商业集团资产编号说明.htm")" target="_blank">编号规则</a>
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.AssetNo)
+            @Html.ValidationMessageFor(model => model.AssetNo)
+        </div>
+                
+            
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Remark)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Remark)
+            @Html.ValidationMessageFor(model => model.Remark)
+        </div>  
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DeviceInfo)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.DeviceInfo)
+            @Html.ValidationMessageFor(model => model.DeviceInfo)
+        </div>  
+        <div class="editor-label">
+            @Html.LabelFor(model => model.GuaranteeDate)
+        </div>
+        <div class="editor-field">
+            @Html.MyDateFor(model=>model.GuaranteeDate,false)
+        </div>      
+    </fieldset>
+    <p><input class="btn" type="submit" value="保存" /> <input class="btn" type="button" value="取消" onclick="window.close()" /></p>
+}
+</div>
+

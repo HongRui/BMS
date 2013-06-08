@@ -1,0 +1,66 @@
+﻿@using BMS.Web
+@using BMS.Web.BLL
+@using OUDAL
+@{
+    ViewBag.Title = "物资入库清单列表";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("MaterialInListQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");        
+     }
+}); 
+var colModelGrid= [{ name: 'Id', index: 'Id', width: 1, align: 'left',hidden:true }
+,{ name: 'Code',label:"单号", index:"i.code", align: 'left' ,width:30}
+,{ name: 'InType',label:"入库类型", index:"i.InType", align: 'left' ,width:60}
+,{ name: 'Supplier',label:"供应商", index:"i.Supplier", align: 'left' ,width:150}
+
+,{ name: 'Name',label:"物料名称", index:"m.name", align: 'left' ,width:200}
+
+,{ name: 'Sepc',label:"品牌/规格", index:"m.spec", align: 'left' ,width:100}
+,{ name: 'UnitPrice',label:"单价", index:"item.unitprice",format:'number',align: 'right',width:50}
+,{ name: 'Num',label:"数量", index:"item.num",format:'number',align: 'right',width:50}
+,{ name: 'Price',label:"总价", index:"item.unitprice*item.num",format:'number',align: 'right',width:60}
+,{ name: 'Department',label:"保管部门", index: 'd.name', align: 'left' ,width:100}
+,{ name: 'UserName',label:"经办人", index: 'u.name', align: 'left',width:50 }
+,{ name: 'InDate',label:"入库日期", index:"i.InDate",formatter:"date", align: 'left' ,width:75}
+,{ name: 'Remark',label:"备注", sortable:false, align: 'left' ,width:200}];
+function rowclick(id)
+{
+    OpenFullWindow("./MaterialInView/"+id,"_blank");
+}
+function AddNew()
+{
+    OpenFullWindow("./MaterialInEdit/0");
+}
+function SearchClick()
+{ 
+    $('#listGrid').appendPostData({ Department: $("#departments").val()});   
+    $('#listGrid').appendPostData({ Name: $("#Name").val()}); 
+    $('#listGrid').appendPostData({ MaterialName: $("#MaterialName").val()});
+    $('#listGrid').appendPostData({ DateFrom: $("#DateFrom").val()}); 
+    $('#listGrid').appendPostData({ DateTo: $("#DateTo").val()}); 
+    $('#listGrid').trigger('reloadGrid');
+}        
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" > 
+<label class="len80" >部门</label>@MyControls.DepartmentDropdown("departments") 
+@Html.ShortInput("Name", "经办人")
+@Html.ShortInput("MaterialName", "物料名称")
+@Html.SearchDate("", "入库日期")
+
+<input type="button" onclick="SearchClick();" value="查询" />
+<input type="button" onclick="AddNew();" value="新增" />
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+

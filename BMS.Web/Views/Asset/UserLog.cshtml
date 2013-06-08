@@ -1,0 +1,69 @@
+﻿@model OUDAL.AssetUser
+@using Mall
+@using BMS.Web.BLL
+@using OUDAL
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+    var usetype=Model.UseType=="借用"?"checked='checked'":"";
+}
+
+<h2>Asset User Log</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+@section Main{
+<table>
+<tr>
+<td>
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>Asset User Log</legend>
+         @Html.HiddenFor(model => model.Id)
+        <table class="form">
+            <tr><td class="form-item">设备</td><td>@ViewBag.asset.Name @ViewBag.asset.AssetNo</td></tr>
+            <tr><td class="form-item">使用人</td><td>@MyControls.SelectUser(Model.UserId,"userid")</td></tr>
+            <tr>@Html.MyTextFor(m => m.Location)</tr>
+            <tr>@Html.MyDateFor(m => m.BeginDate,false)</tr>
+            <tr><td class="form-item"></td><td>
+                <input id="UseType" name="UseType" value="借用" type="checkbox" @usetype />临时借用</td></tr>
+        </table>
+        <p>
+            <input type="submit" value="Save" />
+            @if (Model.Id != 0)
+            {
+                <input type="button" value="Delete" onclick="del();" />
+            }
+            <input type="hidden" value="--" id="act" name="act" />
+        </p>
+    </fieldset>
+       
+}
+</td>
+<td valign="top">
+<table>
+<tr>
+<td valign="top">
+<ul id="ullocation">常用场所</ul>
+@foreach(string s in ViewBag.Locations){
+     @s<br/>
+    }
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+    function del() {
+        if (confirm('确定要删除?') == true) {
+            $("#act").val("delete");
+            document.forms[0].submit();
+        }
+    }
+</script> 
+}

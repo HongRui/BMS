@@ -1,0 +1,24 @@
+﻿@using BMS.Web.Models;
+@model OUDAL.SystemUser
+@{
+    ViewBag.Title = "个人设备信息";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+@section Main{
+用户 @Model.Name 名下在用设备有：
+<table class="table table-bordered">
+<thead>
+<tr><td>固资编号</td><td>设备名称</td><td>规格</td><td>序列号</td><td>使用场所</td><td>领用时间</td></tr>
+</thead>
+@foreach(var p in ViewBag.AssetList)
+{
+    <tr><td>@p.AssetNo</td>
+        <td><a href="../AssetView/@p.AssetId")>@p.AssetName</a></td>        
+        <td>@p.Spec</td>
+        <td>@p.SN</td>
+        <td>@p.Location</td>
+        <td>@p.BeginDate.ToString("yyyy-MM-dd")</td>
+    </tr>
+}
+</table>
+}

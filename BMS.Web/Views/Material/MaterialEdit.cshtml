@@ -1,0 +1,57 @@
+﻿@model OUDAL.Material
+@using OUDAL
+@using BMS.Web
+@using BMS.Web.BLL
+@{
+   
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+<div style="width:500px;margin:0px auto">
+@using (Html.BeginForm() ){
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>物料名称修改</legend>
+
+        @Html.HiddenFor(model => model.Id)
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DepartmentId)
+        </div>
+        <div class="editor-field">
+            @Html.MyDropdown("departmentId",DepartmentBLL.GetDepartmentList(Utilities.GetCurMallId()) ,Model.DepartmentId.ToString())
+            @Html.ValidationMessageFor(model => model.DepartmentId)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.CatalogId)
+        </div>
+        <div class="editor-label">
+            @MyControls.CatalogSelect("",Model.CatalogId,OUDAL.AssetCatalogBLL.GetNameById(Model.CatalogId))
+            @Html.ValidationMessageFor(model => model.CatalogId)
+        </div>   
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Name)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Name)
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>             
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Spec)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Spec)
+            @Html.ValidationMessageFor(model => model.Spec)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Remark)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Remark)
+            @Html.ValidationMessageFor(model => model.Remark)
+        </div>        
+    </fieldset>
+    <p><input class="btn" type="submit" value="保存" /> <input class="btn" type="button" value="取消" onclick="window.close()" /></p>
+}
+</div>
+

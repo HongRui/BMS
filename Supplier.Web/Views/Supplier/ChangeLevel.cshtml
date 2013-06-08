@@ -1,0 +1,45 @@
+﻿@model OUDAL.Supplier
+@using OUDAL
+@using BMS.Web
+@using BMS.Web.BLL
+@{
+   
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+<link rel="stylesheet" href="@Url.Content("~/Content/zTree/css/zTreeStyle.css")" type="text/css">
+<script type="text/javascript" src="@Url.Content("~/Content/zTree/js/jquery.ztree.core-3.0.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Content/zTree/js/jquery.ztree.excheck-3.0.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Content/zTree/js/jquery.ztree.exedit-3.0.js")"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {   
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+   
+}); 
+</script>
+<div style="width:400px;margin:0px auto">
+@using (Html.BeginForm() ){
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    <fieldset>
+        <legend>供应商等级变更</legend>
+        <div class="editor-label">
+            @Model.Name
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Level)
+        </div>
+        <div class="editor-field">
+            <input type="radio" name="Level" value="0" @if(Model.Level==0){<text>checked="checked"</text>} /><span>A</span>
+            <input type="radio" name="Level" value="1" @if(Model.Level==1){<text>checked="checked"</text>} />B
+            <input type="radio" name="Level" value="2" @if(Model.Level==2){<text>checked="checked"</text>} />C
+            <input type="radio" name="Level" value="3" @if(Model.Level==3){<text>checked="checked"</text>} />D
+            <input type="radio" name="Level" value="4" @if(Model.Level==4){<text>checked="checked"</text>} />E
+            @Html.ValidationMessageFor(model => model.Level)
+        </div>  
+    </fieldset>
+    <p><input class="btn" type="submit" value="保存" /> <input class="btn" type="button" value="取消" onclick="window.close()" /></p>
+}
+</div>
+

@@ -1,0 +1,135 @@
+﻿@using Mall
+@using BMS.Web.BLL
+@using OUDAL
+
+
+@{
+    ViewBag.Title = "固定资产清单";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+@* 在页面中输出 *@
+@{
+    JqGridHelper grid = new JqGridHelper(this.Context, "Grid", Url.Content("~/Asset/Query"));
+    grid.query = BMS.Web.QueryBuilder.GetQuery("IT固资查询");
+    
+    }
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+@(new HtmlString(grid.OutGrid()))
+
+ function AfterInsertRow(rowid,aData) {
+            
+        }
+//函数，定义查询条件。函数名不可更改
+        function SearchParamter()
+        {
+           var postData = {State0: $("#state0").attr("checked"),State1: $("#state1").attr("checked"),State2: $("#state2").attr("checked"),State3: $("#state3").attr("checked")};
+            return postData;    
+        }
+        //sortName排序字段名 sorOrder 排序方式 ：asc desc . 如果不指定，可以省略下面两个函数
+        function SortName(){return 'pk_client';}
+        function SortOrder(){return ' asc';}
+        //更改默认大小。默认为800*500 如果不更改，可以省略下面两个函数
+    
+        //function setHeight(){return 300;}
+    }); 
+        
+    //查询
+    function SearchClick()
+    {     
+        $('#listGrid').jqGrid("appendPostData",{ Name: $("#name").val()});
+        $('#listGrid').appendPostData({ user: $("#user").val()});
+        $('#listGrid').appendPostData({ company: $("#company").val()});
+        $('#listGrid').appendPostData({ area: $("#area").val()});
+        $('#listGrid').appendPostData({ Catalog: $("#catalog").val()});
+        $('#listGrid').appendPostData({ remark: $("#remark").val()});
+        $('#listGrid').appendPostData({ sn: $("#sn").val()});
+        $('#listGrid').appendPostData({ supplier: $("#supplier").val()});
+        $('#listGrid').appendPostData({ assetno: $("#assetno").val()});
+        $('#listGrid').appendPostData({ buydatebegin:$("#BuyDateBegin").datebox('getValue')});
+        $('#listGrid').appendPostData({ buydateend: $("#BuyDateEnd").datebox('getValue')});
+        $('#listGrid').appendPostData({ State0: $("#state0").attr("checked")});
+        $('#listGrid').appendPostData({ State1: $("#state1").attr("checked")});
+        $('#listGrid').appendPostData({ State2: $("#state2").attr("checked")});
+        $('#listGrid').appendPostData({ State3: $("#state3").attr("checked")});
+        $('#listGrid').appendPostData({ isbad: $("#isbad").attr("checked")});
+        $('#listGrid').appendPostData({ isborrow: $("#isborrow").attr("checked")});
+        $('#listGrid').appendPostData({ isnouser: $("#isnouser").attr("checked")});
+        $('#listGrid').appendPostData({ issap: $("#issap").attr("checked")});
+        $('#listGrid').appendPostData({ isnosap: $("#isnosap").attr("checked")});
+        $('#listGrid').trigger('reloadGrid');
+    }
+    function AddNew()
+    { 
+        OpenFullWindow("@Request.Url/create","_blank");
+    }
+    function rowclick(id)
+    {
+        OpenFullWindow("@Request.Url/Details/"+id,"_blank");
+    }
+    function ShowHidSearchDiv()
+    {
+        $("#SearchDiv").toggle();
+        if($("#SearchDiv").css('display')=='none')
+        {
+            $("#btnShowHide1").val("打开搜索条件");
+            $("#btnShowHide2").val("打开搜索条件");            
+        }else{
+            $("#btnShowHide1").val("关闭搜索条件");
+            $("#btnShowHide2").val("关闭搜索条件");
+        }        
+    }
+</script>
+   
+<div>
+    <input type="button" value="新增" onclick="AddNew()" />
+    <input type="button" value="搜索" onclick="SearchClick()" />
+    <input id="btnShowHide1" type="button" value="打开搜索条件" onclick="ShowHidSearchDiv()" /> 
+    <div id="SearchDiv" style="display:none">
+    <table >
+    <tr>
+        <td>类 别：</td><td>@Html.MyDropdownFor("catalog", BMS.Web.BLL.AssetCatalogBLL.SelectItems)</td>
+        <td>名称/规格/品牌:</td><td><input id="name" type="text" /></td> 
+        <td>供应商:</td><td><input id="supplier" type="text" /></td>
+        
+    </tr>
+    <tr>        
+        <td>序列号:</td><td><input id="sn" type="text" /></td>       
+        <td>资产号:</td><td><input id="assetno" type="text" /></td>
+        <td>备 注:</td><td><input id="remark" type="text" /></td>
+        </tr>
+    <tr>
+        <td>购买日期:</td><td colspan="3">
+            <input class="easyui-datebox" id="BuyDateBegin" name="BuyDateBegin" type="text" value=""/> - <input class="easyui-datebox" id="BuyDateEnd" name="BuyDateEnd" type="text" value=""/></td>
+        <td>使用人/场所:</td><td><input id="user" type="text" /></td>
+    </tr>
+    <tr>
+        <td>归属公司：</td><td colspan="3">@Html.MyDropdownFor("company", BMS.Web.BLL.CompanyBLL.GetCompany())</td>
+        <td>区域</td><td>@Html.MyDropdownFor("area",ViewBag.arealist as List<SelectListItem>)</td>
+        </tr>
+    <tr><td> 状 态：</td>
+    <td colspan="3"><input type="checkbox" id="state0" name="state" value="0" checked="checked" />在用
+        <input type="checkbox" id="state1" name="state" value="1" />会计报废
+        <input type="checkbox" id="state2" name="state" value="2" />报废
+        <input type="checkbox" id="state3" name="state" value="3" />售出</td>
+    <td colspan="2">
+        <input type="checkbox" id="isbad" name="state" value="1" />故障
+        <input type="checkbox" id="isborrow" name="state" value="2" />借用中
+        <input type="checkbox" id="isnouser" name="state" value="1" />未领用 &nbsp;&nbsp;
+        <input type="checkbox" id="issap" name="state" value="1" />财务入账
+        <input type="checkbox" id="isnosap" name="state" value="1" />财务未入账
+    </td>
+        </tr>
+    </table>
+    <input type="button" value="搜索" onclick="SearchClick()" />
+    <input id="btnShowHide2" type="button" value="打开搜索条件" onclick="ShowHidSearchDiv()" />  
+    </div>
+</div>
+@(new HtmlString(grid.OutTable()))
+<br />
+操作说明：点击表格左侧的记录编号可查看设备详细信息。
+}
+

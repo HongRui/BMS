@@ -1,0 +1,46 @@
+﻿@model OUDAL.MaterialIn
+@using OUDAL
+@using BMS.Web;
+@using BMS.Web.BLL;
+@{
+    ViewBag.Title = "物资入库";
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+}
+@section Main{
+<script type="text/javascript">
+    
+   
+</script>
+<h1>物料入库单</h1>
+    @Html.HiddenFor(model => model.Id)
+    <table class="table table-bordered"><col width="80" /><col width="200" />
+        <tr>@Html.MyDisplayFor(m => m.InDate)</tr>
+        
+        <tr><td class="tdRight">单号</td><td>@Model.Code</td></tr>
+        <tr><td class="tdRight">保管部门</td><td>@DepartmentBLL.GetNameById(Model.DepartmentId)</td></tr>
+        <tr><td class="tdRight">经办人</td><td>@UserBLL.GetNameById(Model.PersonId)</td></tr>
+        <tr><td class="tdRight">供应商</td><td>@Model.Supplier</td></tr>
+        <tr><td class="tdRight">入库类型</td><td>@Enum.GetName(typeof( MaterialInType),Model.InType)</td></tr>
+        <tr>@Html.MyDisplayFor(m=>m.Remark)</tr>
+    </table>
+    <table class="table table-bordered">
+    <thead>
+    <tr><td>保管部门</td><td>种类</td><td>名称</td><td>单价</td><td>数量</td><td>总价</td></tr>
+    </thead>
+    @foreach(var item in ViewBag.Items2)
+    {
+        <tr>
+        <td>@DepartmentBLL.GetNameById(item.DepartmentId)</td>
+        <td>@AssetCatalogBLL.GetNameById(item.CatalogId)</td>
+        <td>@item.Name</td>
+        <td>@item.UnitPrice</td>
+        <td>@item.Num</td>
+        <td>@((item.UnitPrice*item.Num).ToString("N2"))</td>
+        </tr>
+    }
+    </table>
+     <div><br />
+    保管人签名：＿＿＿＿＿＿＿＿
+    <br /><br />日期&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;：＿＿＿＿＿＿＿＿
+    </div>
+ }

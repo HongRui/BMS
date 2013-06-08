@@ -1,0 +1,222 @@
+﻿@model OUDAL.Asset
+@using OUDAL
+@using BMS.Web;
+@using BMS.Web.BLL;
+@using BMS.Web.Models;
+@{
+    ViewBag.Title = "设施设备";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+    bool isbooked = false;
+    foreach(AssetUserView au in ViewBag.UserLog)
+    {
+        if (au.EndDate == null) {isbooked = true;}
+    }
+}
+@section Main{
+<link rel="stylesheet" href="@Url.Content("~/content/colorbox.css")" />
+<script src="@Url.Content("~/scripts/jquery.colorbox-min.js")"></script>
+<script type="text/javascript">
+$(function(){
+    var message='@ViewBag.Message';
+    if(message.length>0)
+    {
+        alert(message);
+    }
+});
+function Retirement(state) {
+    var data={id:@Model.Id,state:state};
+    $.post('../Retirement',data,postafter);
+}
+function Normal() {
+    var data={id:@Model.Id};
+    $.post('../Normal',data,postafter);
+}
+function Delete() {
+    var data={id:@Model.Id};
+    $.post('../Delete',data,postafter);
+}
+
+function postafter(data)
+{
+    alert(data.obj);
+    if(data.success==true)
+    {
+        
+        if(data.obj=="已删除")
+        {            
+            window.opener.location.href=window.opener.location.href;
+            window.close();
+        }
+        window.location.reload();
+    }
+    
+}
+function Print()
+{
+    window.open('../PrintUserSign/@Model.Id');
+}
+function deleteMaintain(maintainid)
+{
+    if(prompt("确定要删除吗?")){
+    var postdata={id:maintainid};
+        $.post("../MaintainDelete",postdata,deleteMaintainPostAfter);
+        return false;
+    }
+}
+function deleteMaintainPostAfter(data){ 
+    if(data.success==false)
+        {
+            alert(data.obj);
+        }else
+        {
+          window.location.reload();
+        }
+}
+</script>
+<div class="btn-toolbar well">
+<div class="btn-group"><button class="btn" onclick="OpenLargeWindow('../AssetEdit/@Model.Id');" >修改基本信息</button></div>
+<div class="btn-group"><button class="btn" onclick="OpenLargeWindow('../AssetEditFinance/@Model.Id');" >修改财务信息</button></div>
+
+
+@if (!isbooked)
+{
+    <div class="btn-group"><button class="btn" onclick="OpenMiddleWindow('../UserBook/0?AssetId=@Model.Id','userlog');" >领用</button></div>
+}
+else
+{
+    <div class="btn-group"><button class="btn" onclick="OpenMiddleWindow('../UserReturn/0?AssetId=@Model.Id','userlog');" >归还</button></div>
+}
+
+    <div class="btn-group"><button class="btn" name="change" onclick="OpenMiddleWindow('../ChangeLog/0?AssetId=@Model.Id','changelog');" >变动</button>  </div>  
+    <div class="btn-group"><button class="btn" onclick="OpenMiddleWindow('../MaintainPlan/0?AssetId=@Model.Id','AssetMaintain');" >新增保养计划</button></div>
+
+ @if (ViewBag.ButtonRetirement == true)
+ {   
+    <div class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+    处置
+    <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+    <li><a href="#" onclick="Retirement(1);">报废</a></li>
+    <li><a href="#" onclick="Retirement(2);">售出</a></li>
+    </ul>
+    </div>
+ }
+ else
+ {
+    <div class="btn-group"><button class="btn" onclick="Normal();" >恢复在用</button></div>
+ }
+    <div class="btn-group"><button class="btn" onclick="Print();" >打印领用签收单</button></div>
+    <div class="btn-group"><button class="btn" onclick="Delete();" >删除</button></div>
+
+</div>
+    @Html.HiddenFor(model => model.Id)
+<div>
+    <div style="float:left;width:49%">
+        <table class="table table-bordered"><col width="80" /><col width="200" />               
+                <tr>
+                    @Html.MyDisplayFor(m => m.CatalogId, AssetCatalogBLL.GetFullNameById(Model.CatalogId))
+                   
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.AssetNo)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Name)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Spec)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.SN)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Supplier)
+
+                </tr>
+                <tr>@Html.MyEnumForTR(m => m.State, typeof(OUDAL.AssetState), true)</tr>
+                <tr>@Html.MyDisplayFor(m => m.Remark)</tr>
+
+               
+                 
+        </table> 
+    </div>
+    <div style="float:right;width:49%">
+    <table class="table table-bordered"><col width="80" /><col width="200" />               
+                <tr>@Html.MyEnumForTR(m => m.AssetType, typeof(OUDAL.AssetType), true)
+                </tr>
+                <tr>@Html.MyDisplayFor(m => m.NCNo)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Price)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.ReceiptNo)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.BuyDate)
+                </tr>
+                 <tr>@Html.MyDisplayFor(m => m.DeviceInfo)</tr>
+                <tr>@Html.MyDisplayFor(m => m.GuaranteeDate)</tr>
+                 
+            </table>
+    </div>      
+</div>                
+
+<div style=" clear:both; height:500px; padding:5px 5px 5px 5px">
+    <div>使用记录
+    @{
+ var gridUserLog = new WebGrid(source: ViewBag.UserLog, defaultSort: "begindate"); 
+     }
+    @gridUserLog.GetHtml(tableStyle: "table table-bordered", headerStyle: "list-title", alternatingRowStyle: "alt", htmlAttributes: "width=300"
+                , columns: gridUserLog.Columns(
+                gridUserLog.Column(columnName: "  领用时间  ", canSort: false, format: (item) => string.Format("{0:yyyy-MM-dd}", item.BeginDate)),
+                gridUserLog.Column(columnName: "  交还时间  ", canSort: false, format: @<text>@if (item.EndDate != null)
+                                                                                          {@item.EndDate.ToString("yyyy-MM-dd")}</text>),
+                                gridUserLog.Column("UserName", "使用人", canSort: false),
+                                gridUserLog.Column("Location", "场所", canSort: false),
+                                gridUserLog.Column("UseType", "领用类型", canSort: false),
+                                            gridUserLog.Column(format: (item) => @Html.ActionLink("Edit", "动作", null, new { onclick = new HtmlString("OpenMiddleWindow('../userbook/" + item.Id + "','userlog');return false;") }))
+            )
+        )
+       
+    </div><br /><div>变动记录
+    @{
+ var gridChangeLog = new WebGrid(source: ViewBag.ChangeLog); 
+     }
+    @gridChangeLog.GetHtml(tableStyle: "table table-bordered", headerStyle: "list-title", alternatingRowStyle: "alt", htmlAttributes: "width=300"
+                , columns: gridChangeLog.Columns(
+                gridChangeLog.Column(columnName: "  日期  ", canSort: false, format: (item) => string.Format("{0:yyyy-MM-dd}", item.ChangeDate)),
+                gridChangeLog.Column("Title", "事由", canSort: false),
+                gridChangeLog.Column("Detail", "说明", canSort: false),
+                gridChangeLog.Column(format: (item) => @Html.ActionLink("Edit", "", null, new { onclick = new HtmlString("OpenMiddleWindow('../changelog/" + item.Id + "','changelog');return false;") }))
+            )
+        )
+    <div>养护、保养计划 
+    @{
+ var gridMaintain = new WebGrid(source: ViewBag.Maintains); 
+     }
+    @gridMaintain.GetHtml(tableStyle: "table table-bordered", headerStyle: "list-title", alternatingRowStyle: "alt", htmlAttributes: "width=300"
+                , columns: gridChangeLog.Columns(
+                gridChangeLog.Column(columnName: "计划日期", canSort: false, format: (item) => item.PlanDate == null ? "" : string.Format("{0:yyyy-MM-dd}", item.PlanDate)),
+                gridChangeLog.Column("PlanDetail", "计划说明", canSort: false),
+                gridChangeLog.Column(columnName: "执行日期", canSort: false, format: (item) => item.DoneDate == null ? "" : string.Format("{0:yyyy-MM-dd}", item.DoneDate)),
+                gridChangeLog.Column("DoneDetail", "执行说明", canSort: false),
+                gridChangeLog.Column(format: (item) => new HtmlString(string.Format(@"
+<a href='about:blank' onclick='OpenMiddleWindow(""../maintainplan/{0}"",""maintainplan"");return false;'>修改</a>
+<a href='about:blank' onclick='OpenMiddleWindow(""../maintaindone/{0}"",""maintaindone"");return false;'>完成</a>
+<a href='about:blank' onclick='deleteMaintain({0});return false;'>删除</a>", item.Id)))
+
+                     )
+                )
+
+        
+    </div><br />   
+    </div><br /><div>@MyControls.AccessLogTable(AccessLog.GetByClass(Model.Id, Asset.LogClass))</div>
+</div>
+
+
+}
+
+

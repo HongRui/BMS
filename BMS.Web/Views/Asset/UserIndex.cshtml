@@ -1,0 +1,51 @@
+﻿@using BMS.Web
+@using BMS.Web.BLL
+@using OUDAL
+@{
+    ViewBag.Title = "用户列表";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+@Styles.Render("~/Content/zTree/css")
+@Scripts.Render("~/Content/zTree")
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { mallid: @Utilities.GetCurMallId()};
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("UserQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        grid.setCell(rowid,"State",aData.State==0?"正常":"禁用");        
+     }
+}); 
+var colModelGrid= [{ name: 'id', index: 'id', width: 1, align: 'left',hidden:true }
+,{ name: 'Name',label:"用户名", index: 'Name', align: 'left',width:200 }
+,{ name: 'WorkNO',label:"工号",sortable:true, align: 'left',width:200 }
+,{ name: 'Email',label:"邮箱",sortable:false,align: 'left',width:250 }
+,{ name: 'Departments',label:"所属部门",sortable:false,align: 'left',width:200 }
+,{ name: 'State',label:"状态", index: 'State', align: 'left',width:100 }];
+function rowclick(id)
+{
+    OpenFullWindow("./PersonalInfo/"+id,"_blank");
+}
+function SearchClick()
+{ 
+    $('#listGrid').appendPostData({ Name: $("#Name").val()}); 
+    $('#listGrid').appendPostData({ Role: $("#Role").val()}); 
+    $('#listGrid').appendPostData({ Departments: $("#departments").val()}); 
+    $('#listGrid').appendPostData({ State1: $("#checkEnabled").attr("checked")}); 
+    $('#listGrid').appendPostData({ State2: $("#checkDisabled").attr("checked")}); 
+    $('#listGrid').trigger('reloadGrid');
+}        
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+<label >用户名称</label><input id="Name" type="text" />
+<label >部门</label>@MyControls.DepartmentDropdown("departments",root: Utilities.GetCurMallId()) 
+状态：<input type="checkbox" id="checkEnabled" />正常
+<input type="checkbox" id="checkDisabled" />禁用
+<input type="button" onclick="SearchClick();" value="查询" />
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+

@@ -1,0 +1,317 @@
+﻿@model OUDAL.Supplier
+@using OUDAL
+@using BMS.Web
+@using BMS.Web.BLL
+@{
+   
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+}
+<style type="text/css">
+    input[type="text"] {
+        width: 420px;
+    }
+     textarea {
+        width: 420px;
+    }
+</style>
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {   
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    $("#Remark").attr("placeholder", "重点介绍企业规模、人数、成立时间、经营状况、市场知名度和客户");
+    $("#Customer").attr("placeholder", "输入1至3个代表客户及相关项目");
+    $("#QuDaoOther").width("200px");
+    $("#QuDaoOther").attr("placeholder", "请输入具体说明");;
+    $("input[type='text'][data-val]").each(function () {
+        $(this).parent().append("<span style='color:red'>*</span>");
+    });
+    });
+</script>
+<div style="width:520px;margin:0px auto">
+@using (Html.BeginForm() ){
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+    <fieldset>
+        <legend>供应商信息</legend>
+         <div class="editor-label">
+            @Html.LabelFor(model => model.Catalog)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Catalog)
+            @Html.ValidationMessageFor(model => model.Catalog)
+        </div> 
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Code)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Code)
+            @Html.ValidationMessageFor(model => model.Code)
+        </div> 
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Type)
+        </div>
+        <div class="editor-field">
+            @Html.MyEnumFor(model=>model.Type,typeof(SupplierType),false)
+            @Html.ValidationMessageFor(model => model.Level)
+        </div>   
+        
+        
+        <div class="editor-label">
+            @Html.LabelFor(model => model.FullName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.FullName)
+            @Html.ValidationMessageFor(model => model.FullName)
+        </div>            
+        <div class="editor-label">
+            @Html.LabelFor(model => model.GroupName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.GroupName)
+            @Html.ValidationMessageFor(model => model.GroupName)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Licence)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Licence)
+            @Html.ValidationMessageFor(model => model.Licence)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TaxNo)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TaxNo)
+            @Html.ValidationMessageFor(model => model.TaxNo)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.QYXZ)
+        </div>
+        <div class="editor-field">
+            <select name="QYXZ">
+                <option @if (Model.QYXZ == "国有")
+                        {<text>selected="selected"</text>}>国有</option>
+                <option @if (Model.QYXZ == "民营")
+                        {<text>selected="selected"</text>}>民营</option>
+                <option @if(Model.QYXZ=="股份公司"){<text>selected="selected"</text>}>股份公司</option>
+                <option @if (Model.QYXZ == "个体")
+                        {<text>selected="selected"</text>}>个体</option>
+                <option @if (Model.QYXZ == "港澳台投资")
+                        {<text>selected="selected"</text>}>港澳台投资</option>
+                <option @if (Model.QYXZ == "外商投资")
+                        {<text>selected="selected"</text>}>外商投资</option>
+            </select>
+            @Html.ValidationMessageFor(model => model.QYXZ)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.OrgNo)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.OrgNo)
+            @Html.ValidationMessageFor(model => model.OrgNo)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.QuDao)
+        </div>
+        <div class="editor-field">
+            <select name="QuDao">
+                <option @if (Model.QuDao == "商业集团")
+                        {<text>selected="selected"</text>}>商业集团</option>
+                <option @if (Model.QuDao == "卢湾商管")
+                        {<text>selected="selected"</text>}>卢湾商管</option>
+                <option @if (Model.QuDao == "北京商管")
+                        {<text>selected="selected"</text>}>北京商管</option>
+                <option @if (Model.QuDao == "南昌商管")
+                        {<text>selected="selected"</text>}>南昌商管</option>
+                <option @if (Model.QuDao == "其他")
+                        {<text>selected="selected"</text>} value="其他">其他(请填写具体信息)</option>
+            </select>
+            @Html.EditorFor(model => model.QuDaoOther)
+            
+            @Html.ValidationMessageFor(model => model.QuDao)
+            @Html.ValidationMessageFor(model => model.QuDaoOther)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Bank)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Bank)
+            @Html.ValidationMessageFor(model => model.Bank)
+        </div>
+       
+        <div class="editor-label">
+            @Html.LabelFor(model => model.BankAccount)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.BankAccount)
+            @Html.ValidationMessageFor(model => model.BankAccount)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.LegalPerson)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.LegalPerson)
+            @Html.ValidationMessageFor(model => model.LegalPerson)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RegCapital)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.RegCapital)
+            @Html.ValidationMessageFor(model => model.RegCapital)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RegAddress)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.RegAddress)
+            @Html.ValidationMessageFor(model => model.RegAddress)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RegDate)
+        </div>
+        <div class="editor-field">
+            @Html.MyDateFor(model => model.RegDate,false)
+            @Html.ValidationMessageFor(model => model.RegDate)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Address)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Address)
+            @Html.ValidationMessageFor(model => model.Address)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Zip)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Zip)
+            @Html.ValidationMessageFor(model => model.Zip)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Website)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Website)
+            @Html.ValidationMessageFor(model => model.Website)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Phone)
+        </div>        
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Phone)
+            @Html.ValidationMessageFor(model => model.Phone)
+        </div>
+       
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Contact)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Contact)
+            @Html.ValidationMessageFor(model => model.Contact)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ContactDute)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ContactDute)
+            @Html.ValidationMessageFor(model => model.ContactDute)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ContactPhone)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ContactPhone)
+            @Html.ValidationMessageFor(model => model.ContactPhone)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ContactFax)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ContactFax)
+            @Html.ValidationMessageFor(model => model.ContactFax)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ContactMobile)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ContactMobile)
+            @Html.ValidationMessageFor(model => model.ContactMobile)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ContactEmail)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ContactEmail)
+            @Html.ValidationMessageFor(model => model.ContactEmail)
+        </div>
+        
+       
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Brand)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Brand)
+            @Html.ValidationMessageFor(model => model.Brand)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Trademark)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Trademark)
+            @Html.ValidationMessageFor(model => model.Trademark)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.SaleZone)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.SaleZone)
+            @Html.ValidationMessageFor(model => model.SaleZone)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Product)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Product)
+            @Html.ValidationMessageFor(model => model.Product)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ProductLevel)
+        </div>
+        <div class="editor-field">
+            @Html.MyEnumFor(model => model.ProductLevel,typeof(SupplierProductLevel),false)
+            @Html.ValidationMessageFor(model => model.ProductLevel)
+        </div>  
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Customer)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.Customer)
+            @Html.ValidationMessageFor(model => model.Customer)
+        </div>  
+        <div class="editor-label">
+            @Html.LabelFor(model => model.LvDiProject)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.LvDiProject)
+            @Html.ValidationMessageFor(model => model.LvDiProject)
+        </div> 
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Remark)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.Remark)
+            @Html.ValidationMessageFor(model => model.Remark)
+        </div>       
+        <div class="editor-label">
+            @Html.LabelFor(model => model.AuditRemark)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.AuditRemark)
+            @Html.ValidationMessageFor(model => model.AuditRemark)
+        </div>       
+    </fieldset>
+    <p><input class="btn" type="submit" value="保存" /> <input class="btn" type="button" value="取消" onclick="window.close()" /></p>
+}
+</div>
+

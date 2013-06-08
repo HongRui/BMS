@@ -1,0 +1,48 @@
+﻿@using BMS.Web
+@using BMS.Web.BLL
+@using OUDAL
+@model int
+@{
+    ViewBag.Title = "物资名称列表";
+    Layout = "~/Views/Shared/_MainListLayout.cshtml";
+}
+@section Main{
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var PostData = { };
+    $( ".datepicker" ).datepicker({changeMonth: true,changeYear: true,showButtonPanel: true,showOtherMonths: true,selectOtherMonths: true});
+    @Html.Raw(JqGridSimple.OutGrid("ListQuery"));
+    
+    function AfterInsertRow(rowid,aData) {
+        //grid.setCell(rowid,"Name","<a href='#' onclick=rowclick("+rowid+")>"+aData.Name+"</a>","Red");        
+     }
+}); 
+var colModelGrid= [{ name: 'Id', index: 'Id', width: 1, align: 'left',hidden:true }
+,{ name: 'Catalog',label:"类别", index: 'CatalogId', align: 'left' }
+,{ name: 'Name',label:"名称", index: 'Name', align: 'left' }
+,{ name: 'Spec',label:"品牌/型号/规格", sortable:false, align: 'left' }
+,{ name: 'Remark',label:"备注", sortable:false, align: 'left' }];
+function rowclick(id)
+{
+    OpenFullWindow("./MaterialView/"+id,"_blank");
+}
+function AddNew()
+{
+    OpenFullWindow("./MaterialEdit/0");
+}
+function SearchClick()
+{ 
+    $('#listGrid').appendPostData({ Name: $("#Name").val()}); 
+    $('#listGrid').trigger('reloadGrid');
+}        
+</script>
+@Model
+<div class="ui-widget ui-widget-content ui-corner-all searchdiv" >
+<label class="len80">名称</label><input id="Name" type="text" />
+<input type="button" onclick="SearchClick();" value="查询" />
+<input type="button" onclick="AddNew();" value="新增" />
+</div>
+@Html.Raw(JqGridSimple.OutTable())
+
+}
+

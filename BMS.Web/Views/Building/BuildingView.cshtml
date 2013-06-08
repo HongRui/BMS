@@ -1,0 +1,96 @@
+﻿@model OUDAL.Building
+
+@{
+    ViewBag.Title = "项目信息";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+    bool isbooked = false;
+    
+}
+@section Main{
+    <script type="text/javascript">
+        $(function(){
+            var message='@ViewBag.Message';
+    if(message.length>0)
+    {
+        alert(message);
+    }
+});
+
+function Delete() {
+    var data={id:@Model.Id};
+    $.post('../BuildingDelete',data,function (data){
+        alert(data.obj);
+        if(data.success==true){        
+            if(data.obj=="已删除"){            
+                window.opener.location.href=window.opener.location.href;
+                window.close();
+            }
+            window.location.reload();
+        }
+    });
+}
+    </script>
+    <div class="btn-toolbar well">
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="OpenLargeWindow('../BuildingEdit/@Model.Id');" >修改</button>
+        </div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="OpenLargeWindow('../RoomEdit/0?building=@Model.Id','room');">新增房屋</button></div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="Delete();">删除</button></div>
+
+    </div>
+    @Html.HiddenFor(model => model.Id)
+    <div>
+        <div >
+            <table class="table table-bordered">
+                <col width="80" />
+                <col width="200" />
+                <tr>
+                    @Html.MyDisplayFor(m => m.Name)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.CompanyId,Company.GetName(Model.CompanyId))
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Address)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Remark)
+                </tr>
+
+            </table>
+        </div>
+        
+    </div>
+    <div><b>房屋</b><br/>
+    <table  class="table table-bordered">
+        <thead><tr><td>房号</td>
+                   <td>物业所有权</td>
+                   <td>房屋类型</td>        
+                   <td>产证面积</td>
+                   <td>租赁面积</td>
+                   <td>租户</td>
+            <td>备注</td>
+               </tr></thead>
+        @foreach (var p in ViewBag.Rooms)
+        {
+            
+            
+            <tr><td><a href="javascript:void(0)" onclick="OpenLargeWindow('../RoomEdit/@p.Id?reload=1','room');"> @p.Name</a></td>
+                <td>@p.OwnnerType</td>
+                <td>@p.RoomType</td>
+                <td>@p.Dim</td>
+                <td>@p.RentDim</td>
+                <td>@p.Client</td>
+                <td>@p.Remark</td>
+            </tr>   
+        }
+    </table>
+</div>
+    <div style="clear: both; height: 500px; padding: 5px 5px 5px 5px">
+        <div>@MyControls.AccessLogTable(AccessLog.GetByClass(Model.Id, Building.LogClass))</div>
+    </div>
+
+
+}
+
+

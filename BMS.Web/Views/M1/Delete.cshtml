@@ -1,0 +1,38 @@
+﻿@model OUDAL.MaterialInItem
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>MaterialInItem</legend>
+
+    <div class="display-label">MaterialId</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MaterialId)
+    </div>
+
+    <div class="display-label">InId</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.InId)
+    </div>
+
+    <div class="display-label">UnitPrice</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.UnitPrice)
+    </div>
+
+    <div class="display-label">Num</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Num)
+    </div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}

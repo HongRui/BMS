@@ -1,0 +1,44 @@
+﻿@model OUDAL.Asset
+@using OUDAL
+@using BMS.Web;
+@using BMS.Web.BLL;
+@using BMS.Web.Models;
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+}
+<h1>设备领用签收单</h1>      
+<table class="table table-bordered"><col width="80" /><col width="200" />               
+                <tr>
+                    @Html.MyDisplayFor(m => m.CatalogId, AssetCatalogBLL.GetFullNameById(Model.CatalogId))
+                   
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.AssetNo)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Name)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Spec)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.SN)
+                </tr>
+                <tr>
+                    @Html.MyDisplayFor(m => m.Supplier)
+
+                </tr>
+                <tr>@Html.MyEnumForTR(m => m.State, typeof(OUDAL.AssetState), true)</tr>
+                <tr>@Html.MyDisplayFor(m => m.Remark)</tr>
+<tr><td class="tdRight">领用人</td><td>@if(ViewBag.UserLog!=null){@UserBLL.GetNameById(ViewBag.UserLog.UserId)}</td></tr>
+                <tr><td class="tdRight">使用场所</td><td>@if(ViewBag.UserLog!=null){@ViewBag.UserLog.Location}</td></tr>
+               
+                 
+        </table>     
+            
+            <br />
+            <h3>签名:________________</h3>
+            <h3>日期:________________</h3>
+
+

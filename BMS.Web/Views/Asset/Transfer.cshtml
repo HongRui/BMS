@@ -1,0 +1,36 @@
+﻿@model OUDAL.Asset
+@using Mall
+@using BMS.Web.BLL
+@using OUDAL
+@{
+    ViewBag.Title = "资产转移";
+    Layout = "~/Views/Shared/_SmallLayout.cshtml";
+}
+<h2>Edit</h2>
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+@section Main{
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>Asset</legend>
+         @Html.HiddenFor(model => model.Id)
+        <table>
+            <tr>@Html.MyTextFor(m => m.Name, true)</tr>
+            <tr><td class="form-item">现公司</td><td> @Company.GetName(Model.CompanyId)</td></tr>
+            <tr><td class="form-item">新公司</td><td>@Html.DropDownList("newcompany",BMS.Web.BLL.CompanyBLL.GetCompany())</td></tr>
+            <tr><td class="form-item">备注</td><td><input type="text" name="remark" /></td></tr>
+        </table>
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+        
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

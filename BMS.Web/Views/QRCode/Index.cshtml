@@ -1,0 +1,20 @@
+﻿@{
+    ViewBag.Title = "二维码生成";
+   @Scripts.Render("~/bundles/jquery")
+}
+<script type="text/javascript">
+    function generatepic() {
+        var img = document.getElementById("qrpic");
+        img.setAttribute('src', './GetQRCode?str='+$("#Data").val());
+    }
+</script>
+
+    <div style="width: 500px; margin: 0px auto">
+
+            @Html.ShortInput("Data", "网址：")         
+            @MyControls.Btn("生成","generatepic()")
+        <div>
+            <img id="qrpic" src="http://bms.glcp.com.cn/qrcode/qrcode/get" />
+        </div>
+    </div>
+

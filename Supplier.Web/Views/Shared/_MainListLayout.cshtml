@@ -1,0 +1,109 @@
+﻿@using BMS.Web
+@using BMS.Web.BLL
+@using OUDAL
+@{
+    var isMall=Request.Url.AbsolutePath.ToLower().Contains("/mall/");
+    var jtID = PMBLL.GetDeptByName("上海绿地商业(集团)有限公司");
+    var lwID = PMBLL.GetDeptByName("上海卢湾绿地商业管理有限公司");
+    var bjID = PMBLL.GetDeptByName("北京绿地京城商业管理有限公司");
+    
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <link href="@Url.Content("~/bootstrap/css/bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="@Url.Content("~/content/redmond/jquery-ui-1.8.17.custom.css")" />
+    <link rel="stylesheet" type="text/css" media="screen" href="@Url.Content("~/scripts/jqgrid4/css/ui.jqgrid.css")" />
+    <link rel="stylesheet" type="text/css" media="screen" href="@Url.Content("~/scripts/jqgrid4/plugins/ui.multiselect.css")" />
+    <script src="@Url.Content("~/Scripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/MyJs.js")" type="text/javascript"></script> 
+    <script type="text/javascript" src="@Url.Content("~/scripts/jquery.ui.datepicker-zh-CN.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/jquery-ui-1.8.18.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/jqgrid4/js/grid.locale-cn.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/jqgrid4/plugins/ui.multiselect.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/jqgrid4/js/jquery.jqGrid.src.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/jqgrid4/plugins/grid.postext.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/modernizr-1.7.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/bootstrap/js/bootstrap.js")"></script>
+<script type="text/javascript">
+var rootpath='@Url.Content("~/")';
+</script>
+</head>
+
+<body>
+<div class="navbar">
+    <div class="navbar-inner">
+      <div style="width: auto;" class="container">
+        <a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a><img src="@Url.Content("~/content/images/glcp.png")" style="float:left" />
+        <a href="#" class="brand">绿地商业集团</a>
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li><a href="@Url.Content("~")">首页</a></li>
+            @if (isMall)
+            {
+            <li class="dropdown">
+              <a data-toggle="dropdown" class="dropdown-toggle" href="#">物资物料管理<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li>@Html.ActionLink("物资种类维护", "CatalogView", "AssetCatalog")</li>
+                <li>@Html.ActionLink("物资名称维护", "MaterialList", "Material")</li>
+                <li>@Html.ActionLink("物资入库", "MaterialInList", "Material")</li>
+                <li>@Html.ActionLink("物资出库", "MaterialOutList", "Material")</li>
+                <li>@Html.ActionLink("物资盘点", "Report", "Material")</li>
+                <li>@Html.ActionLink("物资出库汇总", "ReportOutStore", "Material")</li>
+                <li>@Html.ActionLink("物资出库明细", "ReportOutStoreDetail", "Material")</li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a data-toggle="dropdown" class="dropdown-toggle" href="#">设施设备管理<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li>@Html.ActionLink("物资种类维护", "CatalogView", "AssetCatalog")</li>
+                <li>@Html.ActionLink("设施设备清单", "AssetList", "Asset")</li>
+                <li>@Html.ActionLink("员工设备信息", "UserIndex", "Asset")</li>
+                
+              </ul>
+            </li>
+            }
+            else
+            {
+            <li class="dropdown">
+              <a data-toggle="dropdown" class="dropdown-toggle" href="#">系统管理<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li>@Html.ActionLink("部门维护", "DepartmentView", "System")</li>
+                <li>@Html.ActionLink("用户资料维护", "UserIndex", "System")</li>
+                <li>@Html.ActionLink("角色权限维护", "RoleIndex", "System")</li>
+              </ul>
+            </li>
+            }
+          </ul>
+          
+          <ul class="nav pull-right">    
+            <li class="active"><a href="#" >@UserInfo.CurUser.Name</a></li>        
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a data-toggle="dropdown" class="dropdown-toggle" href="#">@BMS.Web.BLL.Utilities.GetCurUnitName( this.Context.Request.Path )<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="@Url.Content("~")">系统管理</a></li>
+                <li><a href="@Url.Content("~/Mall/"+jtID)">商业集团</a></li>
+                <li><a href="@Url.Content("~/Mall/"+lwID)">卢湾商管</a></li>
+                <li><a href="@Url.Content("~/Mall/"+bjID)">北京商管</a></li>                
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div>
+    </div><!-- /navbar-inner -->
+  </div>
+@RenderBody() 
+@RenderSection("Main", false)          
+<footer>
+@RenderSection("Footer",false)
+</footer>
+</body>
+</html>
+

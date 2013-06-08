@@ -1,0 +1,30 @@
+﻿.well {
+  min-height: 20px;
+  padding: 9px; --------->这里改为6
+  margin-bottom: 20px;  ------------->这里改为4
+
+.navbar {
+  *position: relative;
+  *z-index: 2;
+  margin-bottom: 18px; ---------->这里改为6
+  overflow: visible;
+}
+
+legend {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 27px;  ----------->10px
+  font-size: 19.5px;
+  line-height: 36px;
+  color: #333333;
+  border: 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+----------------------------------------------------
+v2.3.1
+
+.navbar {
+  *position: relative;
+  *z-index: 2;
+  margin-bottom: 20px;  --line 4356 ,20 该为2

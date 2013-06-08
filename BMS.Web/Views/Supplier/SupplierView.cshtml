@@ -1,0 +1,199 @@
+﻿@model OUDAL.Supplier
+@using OUDAL
+@using BMS.Web;
+@using BMS.Web.BLL;
+@using BMS.Web.Models;
+@{
+    ViewBag.Title = "供应商";
+    Layout = "~/Views/Shared/_InfoLayout.cshtml";
+    bool isbooked = false;
+    
+}
+@section Main{
+<link rel="stylesheet" href="@Url.Content("~/content/colorbox.css")" />
+<script src="@Url.Content("~/scripts/jquery.colorbox-min.js")"></script>
+<script type="text/javascript">
+$(function(){
+    var message='@ViewBag.Message';
+    if(message.length>0)
+    {
+        alert(message);
+    }
+});
+function SetState(state) {
+    var data={id:@Model.Id,state:state};
+    $.post('../SetState',data,function (data){
+    alert(data.obj);
+    if(data.success==true)
+    {
+        
+        if(data.obj=="已删除")
+        {            
+            window.opener.location.href=window.opener.location.href;
+            window.close();
+        }
+        window.location.reload();
+    }
+    });
+}
+function Delete() {
+    var data={id:@Model.Id};
+    $.post('../Delete',data,function (data){
+    alert(data.obj);
+    if(data.success==true)
+    {
+        
+        if(data.obj=="已删除")
+        {            
+            window.opener.location.href=window.opener.location.href;
+            window.close();
+        }
+        window.location.reload();
+    }
+    }
+    );
+}
+
+</script>
+<div class="btn-toolbar well">
+    <div class="btn-group"><button class="btn" onclick="OpenLargeWindow('../SupplierEdit/@Model.Id');" >修改</button>
+        
+    </div>
+    <div class="btn-group">
+        <button class="btn" onclick="window.open('http://oa.glcp.com.cn/Finance/SitePages/sreg.aspx?SNAME=@Model.AccessCode;@Model.Id,'+escape('@Model.FullName'));" >发起OA流程</button>
+    </div>
+    <div class="btn-group"><button class="btn" name="change" onclick="OpenMiddleWindow('../ChangeLevel/@Model.Id','changelevel');" >评级变更</button>  </div>  
+
+    <div class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+    设置状态
+    <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+    <li><a href="#" onclick="SetState(0);">潜在</a></li>
+    <li><a href="#" onclick="SetState(1);">往来</a></li>
+    <li><a href="#" onclick="SetState(2);">黑名单</a></li>
+    </ul>
+    </div>
+ <div class="btn-group"><button class="btn" name="change" onclick="OpenMiddleWindow('../ChangePassword/@Model.Id','changepassword');" >密码变更</button>  </div>  
+
+    <div class="btn-group"><button class="btn" onclick="Delete();" >删除</button></div>
+
+</div>
+    @Html.HiddenFor(model => model.Id)
+    <div>
+    
+        <table class="table table-bordered"><col width="100" /><col width="200" /><col width="100" /><col width="200" />
+            <tr>@Html.MyEnumForTR(m => m.State, typeof(OUDAL.SupplierState), true)
+                <td class="tdRight">等级</td><td>@Enum.GetName(typeof(SupplierLevel),Model.Level)</td></tr>
+            <tr>@Html.MyEnumForTR(m => m.Type, typeof(OUDAL.SupplierType), true)@Html.MyDisplayFor(m => m.Name)</tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.FullName)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.Catalog)
+                @Html.MyDisplayFor(m => m.Catalog)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.Code)
+                @Html.MyDisplayFor(m => m.Code)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.Licence)
+                @Html.MyDisplayFor(m => m.TaxNo)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.QYXZ)
+                @Html.MyDisplayFor(m => m.OrgNo)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.QuDao)
+                @Html.MyDisplayFor(m => m.QuDaoOther)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.Bank)
+                @Html.MyDisplayFor(m => m.BankAccount)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.LegalPerson)
+                @Html.MyDisplayFor(m => m.RegCapital)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.RegAddress) 
+                @Html.MyDateForTr(m => m.RegDate,true)
+            </tr>
+
+            <tr>
+                @Html.MyDisplayFor(m => m.Address)
+                @Html.MyDisplayFor(m => m.Zip)
+            </tr>
+               
+            <tr>@Html.MyDisplayFor(m => m.Website)
+                @Html.MyDisplayFor(m => m.Phone)
+            </tr>
+            <tr>@Html.MyDisplayFor(m => m.Contact)
+                @Html.MyDisplayFor(m => m.ContactDute)
+                   
+                    
+            </tr> 
+            <tr>
+                @Html.MyDisplayFor(m => m.ContactPhone)
+                @Html.MyDisplayFor(m => m.ContactFax)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.ContactMobile)
+                @Html.MyDisplayFor(m => m.ContactEmail)
+            </tr>
+            <tr>
+                @Html.MyDisplayFor(m => m.Brand)
+                @Html.MyDisplayFor(m => m.Trademark) 
+            </tr>
+            <tr>
+                <td class="tdRight">@Html.LabelFor(m=>m.SaleZone)</td>
+                <td colspan="3">@Model.SaleZone</td>
+            </tr>
+            <tr>
+                <td class="tdRight">@Html.LabelFor(m=>m.Product)</td>
+                <td colspan="3"><pre>@Html.DisplayTextFor(m=>m.Product)</pre></td>
+            </tr>
+            <tr>
+                @Html.MyEnumForTR(m => m.ProductLevel, typeof(OUDAL.SupplierProductLevel), true)
+            </tr>
+            <tr>
+                <td class="tdRight">@Html.LabelFor(m=>m.Customer)</td>
+                <td colspan="3"><pre>@Html.DisplayTextFor(m=>m.Customer)</pre></td>
+            </tr>
+            <tr>
+                <td class="tdRight">@Html.LabelFor(m=>m.LvDiProject)</td>
+                <td colspan="3"><pre>@Html.DisplayTextFor(m=>m.LvDiProject)</pre></td>
+            </tr>
+            <tr>
+                <td class="tdRight">@Html.LabelFor(m=>m.Remark)</td>
+                <td colspan="3"><pre>@Html.DisplayTextFor(m=>m.Remark)</pre></td>
+            </tr>
+            <tr>
+                <td class="tdRight">@Html.LabelFor(m=>m.AuditRemark)</td>
+                <td colspan="3"><pre>@Html.DisplayTextFor(m=>m.AuditRemark)</pre></td>
+            </tr>
+            <tr>
+                <td class="form-item">附件</td><td colspan="3">@foreach(Attachment f in ViewBag.Attachments){
+                                                                 <a href="#" onclick="OpenMiddleWindow('../../Attachment/Delete?fileid=@f.Id','deleteattachment');"><i class="icon-remove"></i> </a>  <a  href="../../Attachment/download?fileid=@f.Id">@f.FileName</a><br /><br /> }
+                                                 <div>[<a href="#" onclick="OpenMiddleWindow('../../Attachment/Upload?Mastertype=@Supplier.LogClass&Masterid=@Model.Id','upload')">上传附件</a>]</div>
+                                             </td>
+            </tr>
+        </table> 
+    </div>
+    @{ var href = string.Format("http://oa.glcp.com.cn/_layouts/FormServer.aspx?XmlLocation=/Finance/SupplierReg/Sreg{0}.xml&Source=http%3A%2F%2Foa%2Eglcp%2Ecom%2Ecn%2FFinance%2FSupplierReg%2FForms%2FAllItems%2Easpx&DefaultItemOpen=1", Model.Id);
+    }
+        <p><a href="@href" target="_blank">查看审批流程</a></p>
+     <div style=" clear:both; height:500px; padding:5px 5px 5px 5px">
+    <div>@MyControls.AccessLogTable(AccessLog.GetByClass(Model.Id, Supplier.LogClass))</div>
+</div>    
+</div>                
+
+
+
+
+}
+
+
